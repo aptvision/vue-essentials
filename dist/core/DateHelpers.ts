@@ -2,18 +2,18 @@ import { ref } from 'vue'
 import { format, differenceInYears, fromUnixTime, sub, isValid, parseISO, isEqual, startOfDay, formatDistance } from 'date-fns'
 import { date } from 'quasar'
 import { pl, hu, enGB } from 'date-fns/locale' // INFO: hardoced-locale-codes from date fns, you can add another in future
+import { IDateHelpersConfig } from '../types/DateHelpersInterface'
 
-export function useDateHelpers (options?:any) {
-  
-  const formatDate = options?.userDateFormat.date || 'YYYY/MM/DD'
-  const formatDateTime = options?.userDateFormat.dateTime || 'YYYY/MM/DD HH:mm'
-  const formatDateTimeSec = options?.userDateFormat.dateTimeSec || 'YYYY/MM/DD HH:mm:ss'
-  const formatTime = options?.userDateFormat.time || 'HH:mm'
+export function useDateHelpers (config?:IDateHelpersConfig) {
+  const formatDate = config?.userDateFormat?.date || 'YYYY/MM/DD'
+  const formatDateTime = config?.userDateFormat?.dateTime || 'YYYY/MM/DD HH:mm'
+  const formatDateTimeSec = config?.userDateFormat?.dateTimeSec || 'YYYY/MM/DD HH:mm:ss'
+  const formatTime = config?.userDateFormat?.time || 'HH:mm'
   const formatDateISO = 'YYYY-MM-DD'
   const formatDateTimeISO = 'YYYY-MM-DDTHH:mm:ss'
 
   const correctLocale = () => {
-    const localeCode = options?.localeCode || 'en_GB.utf8'
+    const localeCode = config?.localeCode || 'en_GB.utf8'
     switch (localeCode) {
       case 'pl_PL.utf8':
         return pl
@@ -84,17 +84,17 @@ export function useDateHelpers (options?:any) {
     )
   }
 
-  const typeOptions = ref([
-    { value: 'relative', label: $_t('Relative Date') },
-    { value: 'fixed', label: $_t('Actual Date') }
-  ])
+  // const typeOptions = ref([
+  //   { value: 'relative', label: $_t('Relative Date') },
+  //   { value: 'fixed', label: $_t('Actual Date') }
+  // ])
 
-  const relativeDateOptions = ref([
-    { value: 'today', label: $_t('Today') },
-    { value: 'thisWeek', label: $_t('Start of current week') },
-    { value: 'thisMonth', label: $_t('Start of current month') },
-    { value: 'thisYear', label: $_t('Start of current year') }
-  ])
+  // const relativeDateOptions = ref([
+  //   { value: 'today', label: $_t('Today') },
+  //   { value: 'thisWeek', label: $_t('Start of current week') },
+  //   { value: 'thisMonth', label: $_t('Start of current month') },
+  //   { value: 'thisYear', label: $_t('Start of current year') }
+  // ])
   const operatorOptions = ref([
     { value: 'plus', label: '+' },
     { value: 'minus', label: '-' }
@@ -130,13 +130,13 @@ export function useDateHelpers (options?:any) {
     humanDateTimeSecFromTimestamp,
     currentYear,
     subtractFromDate,
-    typeOptions,
-    relativeDateOptions,
     operatorOptions,
     isValidDate,
     doesIncludeTime,
     useTimeAgo,
     time,
     currentDateSql
+    // typeOptions,
+    // relativeDateOptions,
   }
 }
