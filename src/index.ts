@@ -1,5 +1,5 @@
 import { useDateHelpers } from "./core/DateHelpers"
 
-export {
+export type {
     useDateHelpers
 }
