@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get branch names
+        id: branch-name
+        uses: tj-actions/branch-names@v5.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Install dependencies
+        run: yarn build
+
+      - name: Publish new version
+        run: yarn release
