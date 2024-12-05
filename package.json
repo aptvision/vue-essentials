@@ -1,7 +1,7 @@
 {
   "name": "vue-essentials",
   "version": "1.0.6",
-  "main": "index.js",
+  "main": "index.ts",
   "type": "commonjs",
   "license": "MIT",
   "scripts": {
