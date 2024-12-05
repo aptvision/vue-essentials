@@ -1,5 +1,5 @@
 import { IDateHelpersConfig } from "./DateHelpersInterface";
 
-export {
+export type{
     IDateHelpersConfig
 }
