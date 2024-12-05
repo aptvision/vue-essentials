@@ -12,13 +12,21 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Get branch names
+        id: branch-name
+        uses: tj-actions/branch-names@v5.1
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      
 
       - name: Install dependencies
         run: yarn install
