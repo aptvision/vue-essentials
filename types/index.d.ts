@@ -1,2 +1,3 @@
 import { useDateHelpers } from "./core/DateHelpers";
-export type { useDateHelpers };
+import { useAptvisionApiRest } from './core/AptvisionApiRest';
+export { useDateHelpers, useAptvisionApiRest, };

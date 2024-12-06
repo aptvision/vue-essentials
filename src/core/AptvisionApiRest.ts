@@ -1,6 +1,5 @@
-import { JsonObject } from 'src/interfaces/AptvisionEssentials';
-import RestApiResponseInterface from 'src/helpers/ApiRest';
-
+import { JsonObject } from '../types'
+import { RestApiResponseInterface } from '../types'
 export class AuthorizationException extends Error {}
 export type TErrorHandler = (error: Error, response?: Response) => unknown
 export interface IAptvisionApiRestConfig {
@@ -154,7 +153,7 @@ export const useAptvisionApiRest = (config: IAptvisionApiRestConfig) => {
         reject(config.errorHandler ? config.errorHandler(error, resp) : error)
       })
   })
-  const post = (endpoint: string, data?: JsonObject = {}, configOverride: TRestApiOptionsOverride) => {
+  const post = (endpoint: string, data: JsonObject|undefined, configOverride: TRestApiOptionsOverride) => {
     return new Promise<RestApiResponseInterface>((resolve, reject) => {
       const url = getUrl(endpoint, configOverride)
       const abortController = configOverride?.abortController || new AbortController()
@@ -173,13 +172,13 @@ export const useAptvisionApiRest = (config: IAptvisionApiRestConfig) => {
           resp = response
           return handleResponse(response, configOverride)
         })
-        .then(result => resolve(result))
+        .then(result => resolve(result as unknown as RestApiResponseInterface))
         .catch((error: Error) => {
           reject(config.errorHandler ? config.errorHandler(error, resp) : error)
         })
     })
   }
-  const put = (endpoint: string, data?: JsonObject = {}, id: string, configOverride: TRestApiOptionsOverride) => {
+  const put = (endpoint: string, data: JsonObject|undefined, id: string, configOverride: TRestApiOptionsOverride) => {
     return new Promise<JsonObject>((resolve, reject) => {
       let url = getUrl(endpoint, configOverride)
       const abortController = configOverride?.abortController || new AbortController()
@@ -201,7 +200,7 @@ export const useAptvisionApiRest = (config: IAptvisionApiRestConfig) => {
           resp = response
           return handleResponse(response, configOverride)
         })
-        .then(result => resolve(result))
+        .then(result => resolve(result as unknown as JsonObject))
         .catch((error: Error) => {
           reject(config.errorHandler ? config.errorHandler(error, resp) : error)
         })
@@ -222,13 +221,13 @@ export const useAptvisionApiRest = (config: IAptvisionApiRestConfig) => {
           resp = response
           return handleResponse(response, configOverride)
         })
-        .then(result => resolve(result))
+        .then(result => resolve(result as unknown as JsonObject))
         .catch((error: Error) => {
           reject(config.errorHandler ? config.errorHandler(error, resp) : error)
         })
     })
   }
-  const poll = (endpoint: string, params: JsonObject, intervalSec: BigInteger, configOverride: TRestApiOptionsOverride) => {
+  const poll = (endpoint: string, params: JsonObject, intervalSec: number, configOverride: TRestApiOptionsOverride) => {
     // clear timeout if exists
     if (typeof pollTimeouts[endpoint] !== 'undefined') {
       clearTimeout(pollTimeouts[endpoint])
