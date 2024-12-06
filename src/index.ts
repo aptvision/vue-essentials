@@ -1,5 +1,7 @@
 import { useDateHelpers } from "./core/DateHelpers"
+import { useAptvisionApiRest } from './core/AptvisionApiRest'
 
-export type {
-    useDateHelpers
+export {
+    useDateHelpers,
+    useAptvisionApiRest,
 }
