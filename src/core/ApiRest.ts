@@ -129,8 +129,8 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
   }
   const get = (
     endpoint: string,
-    params: JsonObject,
-    configOverride: TRestApiOptionsOverride
+    params?: JsonObject,
+    configOverride?: TRestApiOptionsOverride
   ): Promise<JsonObject> => new Promise((resolve, reject) => {
     let url = getUrl(endpoint, configOverride)
     if (params && typeof params === 'object') {
