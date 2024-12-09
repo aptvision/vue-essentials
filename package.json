@@ -1,12 +1,18 @@
 {
   "name": "vue-essentials",
-  "version": "1.0.6",
-  "main": "index.js",
+  "version": "1.0.8",
+  "main": "prod/index.js",
   "type": "commonjs",
+  "typings": "types/index.d.ts",
   "license": "MIT",
+  "author": {
+    "name": "scg32",
+    "email": "grzes33@gmail.com"
+  },
   "scripts": {
     "release": "standard-version",
-    "build": "cpx \"src/**/*.ts\" dist/;tsc --outDir dist/modules --module commonjs",
+    "build": "tsc --outDir prod;tsc --outDir prod/modules --module commonjs;yarn tsc ./src/types/*.ts --declaration --emitDeclarationOnly --outDir ./types src/index.ts",
+    "types": "tsc --declaration --emitDeclarationOnly --outDir ./prod/types src/index.ts",
     "dev": "nodemon --exec node --no-warnings=ExperimentalWarning --loader ts-node/esm src/index.ts",
     "test": "jest",
     "lint": "eslint .",
