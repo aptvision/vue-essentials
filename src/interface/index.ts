@@ -4,7 +4,7 @@ import { TRestApiOptionsOverride, ApiErrorInterface, RestApiResponseInterface, R
 type JsonObject<T = unknown> = { [Key in string]?: T }
 type TScalar = string|number|boolean|string[]|number[]
 type NonEmptyString<T> = T extends '' ? never : T
-export type{
+export type {
     IDateHelpersConfig,
     TRestApiOptionsOverride,
     JsonObject,

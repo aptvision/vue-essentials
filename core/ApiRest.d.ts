@@ -1,5 +1,4 @@
 import { JsonObject } from '../types';
-import { RestApiResponseInterface } from '../types';
 export declare class AuthorizationException extends Error {
 }
 export type TErrorHandler = (error: Error, response?: Response) => unknown;
@@ -16,11 +15,27 @@ export interface IAptvisionApiRestConfig {
     unauthorizedHandler?: () => void;
     errorHandler?: TErrorHandler;
 }
-export type TRestApiOptionsOverride = Pick<IAptvisionApiRestConfig, 'apiUrl' | 'responseType' | 'prefixRoutesWithUserId' | 'prefixRoutesWithApiVersion' | 'prefixRoutesWithOrganizationId'> & {
+export interface ApiErrorInterface {
+    status: number;
+    code: string;
+    title: string;
+    template: string;
+    type: 'ERROR' | 'NOTICE';
+    params: JsonObject<string>;
+    meta: ResponseMeta<unknown>;
+}
+export type ResponseMeta<T> = {
+    [key: string]: T;
+};
+export interface RestApiResponseInterface<T = any> {
+    data: T;
+    meta: ResponseMeta<any>;
+}
+export type TRestApiOptionsOverride = Partial<Pick<IAptvisionApiRestConfig, 'apiUrl' | 'responseType' | 'prefixRoutesWithUserId' | 'prefixRoutesWithApiVersion' | 'prefixRoutesWithOrganizationId'>> & {
     abortController?: AbortController;
 };
-export declare const useAptvisionApiRest: (config: IAptvisionApiRestConfig) => {
-    get: (endpoint: string, params: JsonObject, configOverride: TRestApiOptionsOverride) => Promise<Blob | JsonObject>;
+export declare const useApiRest: (config: IAptvisionApiRestConfig) => {
+    get: (endpoint: string, params?: JsonObject, configOverride?: TRestApiOptionsOverride) => Promise<JsonObject>;
     post: (endpoint: string, data: JsonObject | undefined, configOverride: TRestApiOptionsOverride) => Promise<RestApiResponseInterface<any>>;
     put: (endpoint: string, data: JsonObject | undefined, id: string, configOverride: TRestApiOptionsOverride) => Promise<JsonObject>;
     remove: (endpoint: string, configOverride: TRestApiOptionsOverride) => Promise<JsonObject>;

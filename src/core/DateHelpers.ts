@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { format, differenceInYears, fromUnixTime, sub, isValid, parseISO, isEqual, startOfDay, formatDistance } from 'date-fns'
 import { date } from 'quasar'
 import { pl, hu, enGB } from 'date-fns/locale' // INFO: hardoced-locale-codes from date fns, you can add another in future
-import { IDateHelpersConfig } from '../types/DateHelpersInterface'
+import { IDateHelpersConfig } from '../interface/DateHelpersInterface'
 
 export function useDateHelpers (config?:IDateHelpersConfig) {
   const formatDate = config?.userDateFormat?.date || 'YYYY/MM/DD'
