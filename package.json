@@ -11,7 +11,7 @@
   },
   "scripts": {
     "release": "standard-version",
-    "build": "tsc --outDir prod;tsc --outDir prod/modules --module commonjs;yarn tsc ./src/types/*.ts --declaration --emitDeclarationOnly --outDir ./types src/types/index.ts",
+    "build": "tsc --outDir prod;tsc --outDir prod/modules --module commonjs;yarn tsc ./src/types/*.ts --declaration --emitDeclarationOnly --outDir ./ src/index.ts",
     "types": "tsc --declaration --emitDeclarationOnly --outDir ./prod/types src/index.ts",
     "dev": "nodemon --exec node --no-warnings=ExperimentalWarning --loader ts-node/esm src/index.ts",
     "test": "jest",
