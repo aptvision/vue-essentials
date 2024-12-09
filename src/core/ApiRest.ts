@@ -33,19 +33,19 @@ export interface RestApiResponseInterface<T = any> {
   meta: ResponseMeta<any>;
 }
 
-export type TRestApiOptionsOverride = Pick<IAptvisionApiRestConfig,
+export type TRestApiOptionsOverride = Partial<Pick<IAptvisionApiRestConfig,
   'apiUrl'|
   'responseType'|
   'prefixRoutesWithUserId'|
   'prefixRoutesWithApiVersion'|
   'prefixRoutesWithOrganizationId'
->&{
+>>&{
   abortController?: AbortController
 }
+const pollTimeouts: { [index: string]: ReturnType<typeof setTimeout> } = {}
 
 export const useApiRest = (config: IAptvisionApiRestConfig) => {
   const apiUrl = config.apiUrl.trim().replace(/\/+$/, '')
-  const pollTimeouts: { [index: string]: ReturnType<typeof setTimeout> } = {}
   const toUrlEncoded = (params: JsonObject, keys: string[] = [], isArray = false): string => {
     return Object.keys(params).map(key => {
       const val = params[key]
