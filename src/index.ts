@@ -1,7 +1,11 @@
 import { useDateHelpers } from "./core/DateHelpers"
-import { useAptvisionApiRest } from './core/AptvisionApiRest'
+import { useApiRest } from './core/ApiRest'
+import AptError from './core/AptError'
+import { useTranslate as useEssentialsTranslate } from './core/Translate'
 
 export {
-    useDateHelpers,
-    useAptvisionApiRest,
+  useDateHelpers,
+  useApiRest,
+  AptError,
+  useEssentialsTranslate
 }

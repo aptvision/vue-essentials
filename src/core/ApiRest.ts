@@ -1,5 +1,4 @@
 import { JsonObject } from '../types'
-import { RestApiResponseInterface } from '../types'
 export class AuthorizationException extends Error {}
 export type TErrorHandler = (error: Error, response?: Response) => unknown
 export interface IAptvisionApiRestConfig {
@@ -16,6 +15,24 @@ export interface IAptvisionApiRestConfig {
   errorHandler?: TErrorHandler;
 }
 
+export interface ApiErrorInterface {
+  status: number;
+  code: string;
+  title: string;
+  template: string;
+  type: 'ERROR' | 'NOTICE';
+  params: JsonObject<string>;
+  meta: ResponseMeta<unknown>;
+}
+
+export type ResponseMeta<T> = {[key: string]: T }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface RestApiResponseInterface<T = any> {
+  data: T;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  meta: ResponseMeta<any>;
+}
+
 export type TRestApiOptionsOverride = Pick<IAptvisionApiRestConfig,
   'apiUrl'|
   'responseType'|
@@ -26,7 +43,7 @@ export type TRestApiOptionsOverride = Pick<IAptvisionApiRestConfig,
   abortController?: AbortController
 }
 
-export const useAptvisionApiRest = (config: IAptvisionApiRestConfig) => {
+export const useApiRest = (config: IAptvisionApiRestConfig) => {
   const apiUrl = config.apiUrl.trim().replace(/\/+$/, '')
   const pollTimeouts: { [index: string]: ReturnType<typeof setTimeout> } = {}
   const toUrlEncoded = (params: JsonObject, keys: string[] = [], isArray = false): string => {
@@ -62,7 +79,7 @@ export const useAptvisionApiRest = (config: IAptvisionApiRestConfig) => {
     return { Authorization: 'Bearer ' + config.token }
   }
 
-  const handleResponse = async (response: Response, configOverride?: TRestApiOptionsOverride): Promise<Blob|JsonObject> => {
+  const handleResponse = async (response: Response, configOverride?: TRestApiOptionsOverride): Promise<JsonObject> => {
     const conf = Object.assign({}, config, configOverride || {})
     if (response.status === 401) {
       if (conf.unauthorizedHandler) {
@@ -74,8 +91,8 @@ export const useAptvisionApiRest = (config: IAptvisionApiRestConfig) => {
       throw new Error(response.statusText)
     }
     switch (conf.responseType) {
-      case 'blob':
-        return response.blob()
+      // case 'blob':
+      //   return response.blob()
       case 'json': {
         const json: unknown = response.json()
         if (typeof json !== 'object' || json === null) {
@@ -114,7 +131,7 @@ export const useAptvisionApiRest = (config: IAptvisionApiRestConfig) => {
     endpoint: string,
     params: JsonObject,
     configOverride: TRestApiOptionsOverride
-  ): Promise<Blob|JsonObject> => new Promise((resolve, reject) => {
+  ): Promise<JsonObject> => new Promise((resolve, reject) => {
     let url = getUrl(endpoint, configOverride)
     if (params && typeof params === 'object') {
       // remove empty params

@@ -1,17 +1,16 @@
 import { IDateHelpersConfig } from "./DateHelpersInterface";
-import { TRestApiOptionsOverride } from '../core/AptvisionApiRest'
+import { TRestApiOptionsOverride, ApiErrorInterface, RestApiResponseInterface, ResponseMeta } from '../core/ApiRest'
 
 type JsonObject<T = unknown> = { [Key in string]?: T }
-type ResponseMeta<T> = {[key: string]: T }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface RestApiResponseInterface<T = any> {
-    data: T;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    meta: ResponseMeta<any>;
-}
+type TScalar = string|number|boolean|string[]|number[]
+type NonEmptyString<T> = T extends '' ? never : T
 export type{
     IDateHelpersConfig,
     TRestApiOptionsOverride,
     JsonObject,
-    RestApiResponseInterface
+    RestApiResponseInterface,
+    ResponseMeta,
+    ApiErrorInterface,
+    TScalar,
+    NonEmptyString
 }
