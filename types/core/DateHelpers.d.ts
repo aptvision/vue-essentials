@@ -1,4 +1,4 @@
-import { IDateHelpersConfig } from '../types/DateHelpersInterface';
+import { IDateHelpersConfig } from '../interface/DateHelpersInterface';
 export declare function useDateHelpers(config?: IDateHelpersConfig): {
     format: {
         date: string;

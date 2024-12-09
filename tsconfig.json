@@ -14,5 +14,5 @@
         "experimentalSpecifierResolution": "node"
     },
     "include": ["src/**/*.ts", "src/*.ts"],
-    "exclude": ["tests", "src/types/*.ts"]
+    "exclude": ["tests", "src/interface/*.ts"]
   }

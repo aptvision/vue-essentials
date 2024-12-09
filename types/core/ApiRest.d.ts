@@ -1,4 +1,4 @@
-import { JsonObject } from '../types';
+import { JsonObject } from '../interface';
 export declare class AuthorizationException extends Error {
 }
 export type TErrorHandler = (error: Error, response?: Response) => unknown;
