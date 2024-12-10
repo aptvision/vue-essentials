@@ -6,7 +6,6 @@ interface IUserDateFormat {
 }
 export interface IDateHelpersConfig {
     localeCode?: string;
-    $_t?: any;
     userDateFormat?: IUserDateFormat;
 }
 export {};
