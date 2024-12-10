@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useUnDo = void 0;
 let actions = [];
-const useUnDo = () => {
+export const useUnDo = () => {
     const showError = (msg) => {
         console.error(msg);
     };
@@ -48,4 +45,3 @@ const useUnDo = () => {
     };
     return { add, undo, redo, hasUndo, hasRedo };
 };
-exports.useUnDo = useUnDo;

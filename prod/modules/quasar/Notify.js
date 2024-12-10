@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useNotify = void 0;
-const quasar_1 = require("quasar");
-const useNotify = () => {
+import { Notify } from 'quasar';
+export const useNotify = () => {
     const payloadToNotifyObj = (payload) => {
-        if (!quasar_1.Notify.create) {
+        if (!Notify.create) {
             throw new Error('Quasar Notify plugin needs to be enabled in the quasar.conf.js file in your local project');
         }
         const notifyObj = {};
@@ -32,23 +29,23 @@ const useNotify = () => {
         success(payload) {
             const notify = payloadToNotifyObj(payload);
             notify.type = 'positive';
-            quasar_1.Notify.create(notify);
+            Notify.create(notify);
         },
         info(payload) {
             const notify = payloadToNotifyObj(payload);
             notify.type = 'info';
-            quasar_1.Notify.create(notify);
+            Notify.create(notify);
         },
         error(payload) {
             const notify = payloadToNotifyObj(payload);
             notify.type = 'negative';
-            quasar_1.Notify.create(notify);
+            Notify.create(notify);
         },
         critical(payload) {
             console.error(payload);
             const notify = payloadToNotifyObj(payload);
             notify.type = 'negative';
-            quasar_1.Notify.create(notify);
+            Notify.create(notify);
         },
         log(payload) {
             if (process.env.NODE_ENV === 'development') {
@@ -57,4 +54,3 @@ const useNotify = () => {
         }
     };
 };
-exports.useNotify = useNotify;

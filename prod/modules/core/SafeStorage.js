@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useSafeStorage = void 0;
-const encrypt_storage_1 = require("encrypt-storage");
+import { EncryptStorage } from 'encrypt-storage';
 const getProcessedPassword = (password) => {
     if (!password) {
         throw new Error('Safe storage password cannot be empty');
@@ -9,13 +6,13 @@ const getProcessedPassword = (password) => {
     // this is to make sure password is at least 10 chars long (it's a requirement from EncryptStorage library)
     return 'safe_storage_password_' + password;
 };
-const useSafeStorage = () => {
+export const useSafeStorage = () => {
     const set = (password, key, value) => {
-        const storage = new encrypt_storage_1.EncryptStorage(getProcessedPassword(password));
+        const storage = new EncryptStorage(getProcessedPassword(password));
         storage.setItem(key, storage.encryptValue(value));
     };
     const get = (password, key) => {
-        const storage = new encrypt_storage_1.EncryptStorage(getProcessedPassword(password));
+        const storage = new EncryptStorage(getProcessedPassword(password));
         let hash;
         try {
             hash = storage.getItem(key);
@@ -37,4 +34,3 @@ const useSafeStorage = () => {
     };
     return { set, get };
 };
-exports.useSafeStorage = useSafeStorage;

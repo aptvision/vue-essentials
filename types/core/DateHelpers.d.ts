@@ -16,7 +16,7 @@ export declare function useDateHelpers(config?: IDateHelpersConfig): {
     humanDateTimeFromTimestamp: (dateString: number) => string;
     humanDateTimeSecFromTimestamp: (dateString: number) => string;
     currentYear: () => string;
-    subtractFromDate: (dateString: string | Date | boolean | null, options: Record<string, number>) => any;
+    subtractFromDate: (dateString: (string | Date | boolean | null) | undefined, options: Record<string, number>) => any;
     operatorOptions: import("vue").Ref<{
         value: string;
         label: string;
@@ -29,7 +29,7 @@ export declare function useDateHelpers(config?: IDateHelpersConfig): {
     }[]>;
     isValidDate: (dateString: string) => boolean;
     doesIncludeTime: (dateString: any) => boolean;
-    useTimeAgo: (dateString: string | Date | boolean | null, options: Record<string, any>) => string;
+    useTimeAgo: (dateString: (string | Date | boolean | null) | undefined, options: Record<string, any>) => string;
     time: (dateString: string) => string;
     currentDateSql: () => string;
 };

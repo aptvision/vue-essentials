@@ -1,11 +1,16 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useApiRest = exports.AuthorizationException = void 0;
-class AuthorizationException extends Error {
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+export class AuthorizationException extends Error {
 }
-exports.AuthorizationException = AuthorizationException;
 const pollTimeouts = {};
-const useApiRest = (config) => {
+export const useApiRest = (config) => {
     const apiUrl = config.apiUrl.trim().replace(/\/+$/, '');
     const toUrlEncoded = (params, keys = [], isArray = false) => {
         return Object.keys(params).map(key => {
@@ -40,7 +45,7 @@ const useApiRest = (config) => {
         }
         return { Authorization: 'Bearer ' + config.token };
     };
-    const handleResponse = async (response, configOverride) => {
+    const handleResponse = (response, configOverride) => __awaiter(void 0, void 0, void 0, function* () {
         const conf = Object.assign({}, config, configOverride || {});
         if (response.status === 401) {
             if (conf.unauthorizedHandler) {
@@ -64,7 +69,7 @@ const useApiRest = (config) => {
             default:
                 throw new Error('Invalid response type config');
         }
-    };
+    });
     const getUrl = (endpoint, configOverride) => {
         const conf = Object.assign({}, config, configOverride || {});
         let apiUrlCopy = apiUrl;
@@ -108,7 +113,7 @@ const useApiRest = (config) => {
                 url += `?${paramsEncoded}`;
             }
         }
-        const abortController = configOverride?.abortController || new AbortController();
+        const abortController = (configOverride === null || configOverride === void 0 ? void 0 : configOverride.abortController) || new AbortController();
         let resp;
         fetch(url, {
             method: 'GET',
@@ -127,7 +132,7 @@ const useApiRest = (config) => {
     const post = (endpoint, data, configOverride) => {
         return new Promise((resolve, reject) => {
             const url = getUrl(endpoint, configOverride);
-            const abortController = configOverride?.abortController || new AbortController();
+            const abortController = (configOverride === null || configOverride === void 0 ? void 0 : configOverride.abortController) || new AbortController();
             let resp;
             if (typeof data !== 'object') {
                 data = {};
@@ -151,7 +156,7 @@ const useApiRest = (config) => {
     const put = (endpoint, data, id, configOverride) => {
         return new Promise((resolve, reject) => {
             let url = getUrl(endpoint, configOverride);
-            const abortController = configOverride?.abortController || new AbortController();
+            const abortController = (configOverride === null || configOverride === void 0 ? void 0 : configOverride.abortController) || new AbortController();
             let resp;
             if (typeof data !== 'object') {
                 data = {};
@@ -178,7 +183,7 @@ const useApiRest = (config) => {
     const remove = (endpoint, configOverride) => {
         return new Promise((resolve, reject) => {
             const url = getUrl(endpoint, configOverride);
-            const abortController = configOverride?.abortController || new AbortController();
+            const abortController = (configOverride === null || configOverride === void 0 ? void 0 : configOverride.abortController) || new AbortController();
             let resp;
             fetch(url, {
                 method: 'DELETE',
@@ -209,7 +214,7 @@ const useApiRest = (config) => {
                         url += `?${paramsEncoded}`;
                     }
                 }
-                const abortController = configOverride?.abortController || new AbortController();
+                const abortController = (configOverride === null || configOverride === void 0 ? void 0 : configOverride.abortController) || new AbortController();
                 let resp;
                 fetch(url, {
                     method: 'GET',
@@ -246,4 +251,3 @@ const useApiRest = (config) => {
         pollCancel
     };
 };
-exports.useApiRest = useApiRest;

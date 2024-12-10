@@ -24,9 +24,9 @@ declare class AptError implements AptErrorInterface {
     constructor(error: string | ApiDataErrorResponseInterface | Error, response?: Response);
     isApiError(): boolean;
     isAbort(): boolean;
-    getMeta(): ResponseMeta<unknown>;
+    getMeta(): ResponseMeta<unknown> | undefined;
     getMessages(): IErrorMessage[];
-    getRawError(): string | Error | ApiErrorInterface[];
+    getRawError(): string | Error | ApiErrorInterface[] | undefined;
     getApiErrors(): ApiErrorInterface[];
     getApiErrorMessages(): IErrorMessage[];
 }

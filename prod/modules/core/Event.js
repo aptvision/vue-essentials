@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useEvent = void 0;
-const quasar_1 = require("quasar");
+import { uid } from 'quasar';
 let events = [];
-const useEvent = () => {
+export const useEvent = () => {
     const on = (name, callback, once = false) => {
-        const id = (0, quasar_1.uid)();
+        const id = uid();
         events.push({
             id,
             name,
@@ -32,4 +29,3 @@ const useEvent = () => {
     };
     return { on, off, trigger };
 };
-exports.useEvent = useEvent;

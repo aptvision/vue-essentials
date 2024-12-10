@@ -1,9 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 class AptError {
-    error;
-    meta;
-    response;
     constructor(error, response) {
         this.response = response;
         if (error instanceof Error) {
@@ -71,4 +66,4 @@ class AptError {
         return messages;
     }
 }
-exports.default = AptError;
+export default AptError;

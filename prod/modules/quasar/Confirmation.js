@@ -1,10 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useConfirmation = void 0;
-const quasar_1 = require("quasar");
-const Common_1 = require("../core/Common");
-const { isEmpty, isObject } = (0, Common_1.useCommonHelpers)();
-const useConfirmation = () => (config) => {
+import { Dialog, Dark } from 'quasar';
+import { useCommonHelpers } from '../core/Common';
+const { isEmpty, isObject } = useCommonHelpers();
+export const useConfirmation = () => (config) => {
+    var _a, _b, _c, _d, _e, _f, _g;
     if (!config.title) {
         throw new Error('Confirmation dialog title is required');
     }
@@ -12,33 +10,36 @@ const useConfirmation = () => (config) => {
         throw new Error('Confirmation dialog message is required');
     }
     let dialogOptions = {
-        position: config.options?.position || 'standard',
+        position: ((_a = config.options) === null || _a === void 0 ? void 0 : _a.position) || 'standard',
         title: config.title,
         message: config.message,
         cancel: config.cancel || true,
-        persistent: config.options?.persistent || true,
-        dark: config.dark || quasar_1.Dark.isActive,
-        progress: typeof config.options?.timeLimit === 'number',
-        prompt: config.options?.prompt
+        persistent: ((_b = config.options) === null || _b === void 0 ? void 0 : _b.persistent) || true,
+        dark: config.dark || Dark.isActive,
+        progress: typeof ((_c = config.options) === null || _c === void 0 ? void 0 : _c.timeLimit) === 'number',
+        prompt: (_d = config.options) === null || _d === void 0 ? void 0 : _d.prompt
     };
     const quasarOptions = { options: {} };
-    if (config.options?.options && isObject(config.options.options) && !isEmpty(config.options.options)) {
+    if (((_e = config.options) === null || _e === void 0 ? void 0 : _e.options) && isObject(config.options.options) && !isEmpty(config.options.options)) {
         quasarOptions.options = config.options.options;
-        dialogOptions = { ...dialogOptions, ...quasarOptions };
+        dialogOptions = Object.assign(Object.assign({}, dialogOptions), quasarOptions);
     }
-    if (!quasar_1.Dialog.create) {
+    if (!Dialog.create) {
         throw new Error('Quasar Dialog plugin needs to be enabled in the quasar.conf.js file in your local project');
     }
-    const dialog = quasar_1.Dialog.create(dialogOptions)
+    const dialog = Dialog.create(dialogOptions)
         .onOk(() => {
-        config.onOk?.();
+        var _a;
+        (_a = config.onOk) === null || _a === void 0 ? void 0 : _a.call(config);
     }).onCancel(() => {
-        config.onCancel?.();
+        var _a;
+        (_a = config.onCancel) === null || _a === void 0 ? void 0 : _a.call(config);
     }).onDismiss(() => {
-        config.onDismiss?.();
+        var _a;
+        (_a = config.onDismiss) === null || _a === void 0 ? void 0 : _a.call(config);
     });
-    if (config.options?.timeLimit) {
-        const timeLimit = config.options?.timeLimit;
+    if ((_f = config.options) === null || _f === void 0 ? void 0 : _f.timeLimit) {
+        const timeLimit = (_g = config.options) === null || _g === void 0 ? void 0 : _g.timeLimit;
         window.setTimeout(() => {
             dialog.update({
                 progress: false
@@ -46,4 +47,3 @@ const useConfirmation = () => (config) => {
         }, timeLimit * 1000);
     }
 };
-exports.useConfirmation = useConfirmation;

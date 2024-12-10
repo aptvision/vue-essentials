@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useCommonHelpers = void 0;
-const quasar_1 = require("quasar");
-const useCommonHelpers = () => {
+import { extend } from 'quasar';
+export const useCommonHelpers = () => {
     const isEmpty = (object) => {
         for (const i in object) {
             return false;
@@ -13,7 +10,7 @@ const useCommonHelpers = () => {
         return typeof value === 'object' && value && !Array.isArray(value);
     };
     const cloneDeep = (obj) => {
-        return (0, quasar_1.extend)(true, {}, obj);
+        return extend(true, {}, obj);
     };
     return {
         isEmpty,
@@ -21,4 +18,3 @@ const useCommonHelpers = () => {
         cloneDeep
     };
 };
-exports.useCommonHelpers = useCommonHelpers;
