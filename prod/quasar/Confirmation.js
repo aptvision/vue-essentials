@@ -1,5 +1,6 @@
 import { Dialog, Dark } from 'quasar';
 import { useCommonHelpers } from '../core/Common';
+import './quasar-init.js';
 const { isEmpty, isObject } = useCommonHelpers();
 export const useConfirmation = () => (config) => {
     if (!config.title) {
