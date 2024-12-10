@@ -67,16 +67,16 @@ export function useDateHelpers(config) {
         const baseDate = sub(dateString || new Date(), options);
         return formatDistance(baseDate, currentDate, Object.assign({ addSuffix: true, locale: correctLocale() }, options));
     };
-    // const typeOptions = ref([
-    //   { value: 'relative', label: $_t('Relative Date') },
-    //   { value: 'fixed', label: $_t('Actual Date') }
-    // ])
-    // const relativeDateOptions = ref([
-    //   { value: 'today', label: $_t('Today') },
-    //   { value: 'thisWeek', label: $_t('Start of current week') },
-    //   { value: 'thisMonth', label: $_t('Start of current month') },
-    //   { value: 'thisYear', label: $_t('Start of current year') }
-    // ])
+    const typeOptions = ref([
+        { value: 'relative', label: (config === null || config === void 0 ? void 0 : config.$_t('Relative Date')) || 'Relative Date' },
+        { value: 'fixed', label: (config === null || config === void 0 ? void 0 : config.$_t('Actual Date')) || 'Actual Date' }
+    ]);
+    const relativeDateOptions = ref([
+        { value: 'today', label: (config === null || config === void 0 ? void 0 : config.$_t('Today')) || 'Today' },
+        { value: 'thisWeek', label: (config === null || config === void 0 ? void 0 : config.$_t('Start of current week')) || 'Start of current week' },
+        { value: 'thisMonth', label: (config === null || config === void 0 ? void 0 : config.$_t('Start of current month')) || 'Start of current month' },
+        { value: 'thisYear', label: (config === null || config === void 0 ? void 0 : config.$_t('Start of current year')) || 'Start of current year' }
+    ]);
     const operatorOptions = ref([
         { value: 'plus', label: '+' },
         { value: 'minus', label: '-' }
@@ -114,8 +114,8 @@ export function useDateHelpers(config) {
         doesIncludeTime,
         useTimeAgo,
         time,
-        currentDateSql
-        // typeOptions,
-        // relativeDateOptions,
+        currentDateSql,
+        typeOptions,
+        relativeDateOptions,
     };
 }

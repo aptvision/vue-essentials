@@ -3,6 +3,7 @@ import { format, differenceInYears, fromUnixTime, sub, isValid, parseISO, isEqua
 import { date } from 'quasar'
 import { pl, hu, enGB } from 'date-fns/locale' // INFO: hardoced-locale-codes from date fns, you can add another in future
 import { IDateHelpersConfig } from '../interface/DateHelpersInterface'
+import { useTranslate } from './Translate'
 
 export function useDateHelpers (config?:IDateHelpersConfig) {
   const formatDate = config?.userDateFormat?.date || 'YYYY/MM/DD'
@@ -84,17 +85,17 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     )
   }
 
-  // const typeOptions = ref([
-  //   { value: 'relative', label: $_t('Relative Date') },
-  //   { value: 'fixed', label: $_t('Actual Date') }
-  // ])
+  const typeOptions = ref([
+    { value: 'relative', label: config?.$_t('Relative Date') || 'Relative Date'},
+    { value: 'fixed', label: config?.$_t('Actual Date') || 'Actual Date'}
+  ])
 
-  // const relativeDateOptions = ref([
-  //   { value: 'today', label: $_t('Today') },
-  //   { value: 'thisWeek', label: $_t('Start of current week') },
-  //   { value: 'thisMonth', label: $_t('Start of current month') },
-  //   { value: 'thisYear', label: $_t('Start of current year') }
-  // ])
+  const relativeDateOptions = ref([
+    { value: 'today', label: config?.$_t('Today') || 'Today'},
+    { value: 'thisWeek', label: config?.$_t('Start of current week') || 'Start of current week'},
+    { value: 'thisMonth', label: config?.$_t('Start of current month') || 'Start of current month'},
+    { value: 'thisYear', label: config?.$_t('Start of current year') || 'Start of current year'}
+  ])
   const operatorOptions = ref([
     { value: 'plus', label: '+' },
     { value: 'minus', label: '-' }
@@ -135,8 +136,8 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     doesIncludeTime,
     useTimeAgo,
     time,
-    currentDateSql
-    // typeOptions,
-    // relativeDateOptions,
+    currentDateSql,
+    typeOptions,
+    relativeDateOptions,
   }
 }

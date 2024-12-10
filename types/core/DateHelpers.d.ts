@@ -32,4 +32,24 @@ export declare function useDateHelpers(config?: IDateHelpersConfig): {
     useTimeAgo: (dateString: (string | Date | boolean | null) | undefined, options: Record<string, any>) => string;
     time: (dateString: string) => string;
     currentDateSql: () => string;
+    typeOptions: import("vue").Ref<{
+        value: string;
+        label: any;
+    }[], {
+        value: string;
+        label: any;
+    }[] | {
+        value: string;
+        label: any;
+    }[]>;
+    relativeDateOptions: import("vue").Ref<{
+        value: string;
+        label: any;
+    }[], {
+        value: string;
+        label: any;
+    }[] | {
+        value: string;
+        label: any;
+    }[]>;
 };
