@@ -1,5 +1,6 @@
 import type { QNotifyCreateOptions } from 'quasar';
 import AptError from '../core/AptError';
+import './quasar-init.js';
 type NotifyPayload = unknown | string | QNotifyCreateOptions | Error | AptError;
 export declare const useNotify: () => {
     success(payload: NotifyPayload): void;

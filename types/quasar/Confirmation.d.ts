@@ -1,5 +1,6 @@
 import type { QDialogOptions } from 'quasar';
 import { JsonObject } from '../interface';
+import './quasar-init.js';
 interface AdditionalOptionOptions {
     timeLimit?: number | undefined;
     position?: 'top' | 'right' | 'bottom' | 'left' | 'standard';
