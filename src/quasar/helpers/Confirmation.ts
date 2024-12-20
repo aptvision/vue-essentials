@@ -1,8 +1,8 @@
 import { Dialog, Dark } from 'quasar'
 import type { QDialogOptions } from 'quasar'
-import { JsonObject } from '../interface'
-import { useCommonHelpers } from '../core/Common'
-import './quasar-init.js'
+import { JsonObject } from '../../interface'
+import { useCommonHelpers } from '../../core/Common'
+import '../quasar-init.js'
 
 const { isEmpty, isObject } = useCommonHelpers()
 

@@ -1,7 +1,7 @@
 import { Notify } from 'quasar'
 import type { QNotifyCreateOptions } from 'quasar'
-import AptError from '../core/AptError'
-import './quasar-init.js'
+import AptError from '../../core/AptError'
+import '../quasar-init.js'
 
 type NotifyPayload = unknown|string|QNotifyCreateOptions|Error|AptError
 export const useNotify = () => {

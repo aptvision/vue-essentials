@@ -10,5 +10,8 @@ export default [
   {languageOptions: { globals: globals.browser }},
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
-  {ignores: ["tests", "coverage", "dist", "**/babel.config.js", "config/*"]}
+  {ignores: ["tests", "coverage", "dist", "**/babel.config.js", "config/*"]},
+  {rules: {
+      '@typescript-eslint/ban-ts-comment': 'off'
+  }}
 ];

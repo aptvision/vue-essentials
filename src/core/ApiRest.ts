@@ -52,7 +52,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
 
       if (typeof val === 'object' && val && !Array.isArray(val)) {
         keys.push(key)
-        return toUrlEncoded(val, keys, Array.isArray(val))
+        return toUrlEncoded(val as JsonObject, keys, Array.isArray(val))
       } else if (typeof val === 'string') {
         let tKey = key
 
@@ -98,7 +98,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
         if (typeof json !== 'object' || json === null) {
           throw new Error('Response is not json object')
         }
-        return json
+        return json as JsonObject
       }
       default:
         throw new Error('Invalid response type config')

@@ -5,9 +5,10 @@ import { useTranslate } from './core/Translate'
 import { useEvent } from './core/Event'
 import { useSafeStorage } from './core/SafeStorage'
 import { useUnDo } from './core/UnDo'
-import { useNotify } from './quasar/Notify'
+import { useNotify } from './quasar/helpers/Notify'
 import { useCommonHelpers } from './core/Common'
-import { useConfirmation } from './quasar/Confirmation'
+import { useConfirmation } from './quasar/helpers/Confirmation'
+import { useAuth } from './core/Auth'
 
 export {
   useDateHelpers,
@@ -20,4 +21,5 @@ export {
   useNotify,
   useCommonHelpers,
   useConfirmation,
+  useAuth,
 }
