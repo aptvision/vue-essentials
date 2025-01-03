@@ -7,7 +7,8 @@
       "module": "esnext",
       "moduleResolution": "Node",
       "skipLibCheck": true,
-      "rootDir": "./src"
+      "rootDir": "./src",
+      "types": ["vitest/globals"]
     },
     "ts-node": {
         "esm": true,
