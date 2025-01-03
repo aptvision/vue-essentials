@@ -1,7 +1,7 @@
 // @ts-ignore
 import VueJwtDecode from 'vue-jwt-decode'
 import { JsonObject } from '../interface'
-import { IAuthToken, LocationQuery } from '../../types/core/Auth'
+import { IAuthToken, LocationQuery } from '../types/core/Auth'
 
 export interface IAuth {
   exchangeCodeForToken: (queryString: { state: string }) => Promise<{

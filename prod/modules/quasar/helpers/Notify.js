@@ -1,5 +1,5 @@
 import { Notify } from 'quasar';
-import './quasar-init.js';
+import '../quasar-init.js';
 export const useNotify = () => {
     const payloadToNotifyObj = (payload) => {
         if (!Notify.create) {

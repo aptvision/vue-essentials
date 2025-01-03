@@ -1,6 +1,6 @@
 import { Dialog, Dark } from 'quasar';
-import { useCommonHelpers } from '../core/Common';
-import './quasar-init.js';
+import { useCommonHelpers } from '../../core/Common';
+import '../quasar-init.js';
 const { isEmpty, isObject } = useCommonHelpers();
 export const useConfirmation = () => (config) => {
     var _a, _b, _c, _d, _e, _f, _g;
