@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+      "target": "ES6",
+      "strict": true,
+      "outDir": "./prod/modules",
+      "esModuleInterop": true,
+      "module": "ES6",
+      "moduleResolution": "Node",
+      "skipLibCheck": true,
+      "rootDir": "./src",
+      "lib": ["dom","es6"]
+    },
+    // "ts-node": {
+    //     "esm": true,
+    //     "experimentalSpecifierResolution": "node"
+    // },
+    "include": ["src/**/*.ts", "src/*.ts"],
+    "exclude": ["tests", "node_modules"]
+  }

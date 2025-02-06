@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+      "target": "ESNext",
+      "strict": true,
+      "outDir": "./types",
+      "esModuleInterop": true,
+      "module": "esnext",
+      "moduleResolution": "Node",
+      "skipLibCheck": true,
+      "rootDir": "./src",
+      "declaration": true,
+      "emitDeclarationOnly": true
+    },
+    "ts-node": {
+        "esm": true,
+        "experimentalSpecifierResolution": "node"
+    },
+    "include": ["src/interface/*.ts", "src/index.ts"],
+    "exclude": ["tests", "node_modules"]
+  }

@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+      "target": "ESNext",
+      "strict": true,
+      "outDir": "./prod",
+      "esModuleInterop": true,
+      "module": "esnext",
+      "moduleResolution": "Node",
+      "skipLibCheck": true,
+      "rootDir": "./src",
+      "types": ["vitest/globals"]
+    },
+    "ts-node": {
+        "esm": true,
+        "experimentalSpecifierResolution": "node"
+    },
+    "include": ["src/**/*.ts", "src/*.ts"],
+    "exclude": ["tests", "src/interface/*.ts"]
+  }
