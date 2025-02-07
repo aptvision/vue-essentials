@@ -97,61 +97,6 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
     const encoder = new DataEncoder();
     console.log(encoder.encode(params))
     return encoder.encode(params);
-  //@ts-expect-error type
-  function is(className, object) {
-    return Object.prototype.toString.call(object) === '[object '+ className +']';
-  }
-  const DataEncoder = function() {
-    //@ts-expect-error type
-    this.levels = [];
-    //@ts-expect-error type
-    this.actualKey = null;
-  }
-  //@ts-expect-error type
-  DataEncoder.prototype.__dataEncoding = function(data) {
-    let uriPart = '';
-    const levelsSize = this.levels.length;
-    if (levelsSize) {
-      uriPart = this.levels[0];
-      for(let c = 1; c < levelsSize; c++) {
-        uriPart += '[' + this.levels[c] + ']';
-      }
-    }
-    let finalString = '';
-    if (is('Object', data)) {
-      const keys = Object.keys(data);
-      const l = keys.length;
-      for(let a = 0; a < l; a++) {
-        const key = keys[a];
-        const value = data[key];
-        this.actualKey = key;
-        this.levels.push(this.actualKey);
-        finalString += this.__dataEncoding(value);
-      }
-    } else if (is('Array', data)) {
-      if (!this.actualKey) throw new Error("Directly passed array does not work")
-      const aSize = data.length;
-      for (let b = 0; b < aSize; b++) {
-        const aVal = data[b];
-        this.levels.push(b);
-        finalString += this.__dataEncoding(aVal);
-      }
-    } else {
-      finalString += uriPart + '=' + encodeURIComponent(data) + '&';
-    }
-    this.levels.pop();
-    return finalString;
-  }
-  //@ts-expect-error type
-  DataEncoder.prototype.encode = function(data) {
-    if (!is('Object', data) || !Object.keys(data).length) return null;
-    return this.__dataEncoding(data).slice(0, -1);
-  }
-  const toUrlEncoded = (params: JsonObject): string => {
-    //@ts-expect-error type
-    const encoder = new DataEncoder();
-    console.log(encoder.encode(params))
-    return encoder.encode(params);
   }
   const getAuthHeader = () => {
     if (!config.token) {
@@ -214,10 +159,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
   ): Promise<JsonObject> => new Promise((resolve, reject) => {
     let url = getUrl(endpoint, configOverride)
     if (params && typeof params === 'object') {
-      // remove empty params
       for (const key in params) {
-        if (
-          typeof params[key] === 'undefined' ||
         if (
           typeof params[key] === 'undefined' ||
           (['filterBy', 'orderBy'].includes(key) && !Object.keys(params[key] || {}).length) ||
@@ -259,7 +201,6 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
       fetch(url, {
         method: 'POST',
         signal: abortController.signal,
-        headers: Object.assign({ 'Content-Type': 'application/ld+json' }, getAuthHeader()),
         headers: Object.assign({ 'Content-Type': 'application/ld+json' }, getAuthHeader()),
         body: JSON.stringify(data)
       })
