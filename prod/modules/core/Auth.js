@@ -1,4 +1,4 @@
-import { decode } from 'vue-jwt-decode';
+import VueJwtDecode from 'vue-jwt-decode';
 export const useAuth = (config) => {
     const saveToken = (token) => {
         if (!doVerifyToken(token)) {
@@ -142,7 +142,7 @@ export const useAuth = (config) => {
         return typeof ((_a = getDecodedToken(token)) === null || _a === void 0 ? void 0 : _a.exp) !== 'undefined';
     };
     const getDecodedToken = (token) => {
-        return decode(token);
+        return VueJwtDecode.decode(token);
     };
     const getAuthHeader = () => {
         const token = localStorage.getItem(config.authTokenName);
