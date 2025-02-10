@@ -12,32 +12,65 @@ export class AuthorizationException extends Error {
 const pollTimeouts = {};
 export const useApiRest = (config) => {
     const apiUrl = config.apiUrl.trim().replace(/\/+$/, '');
-    const toUrlEncoded = (params, keys = [], isArray = false) => {
-        return Object.keys(params).map(key => {
-            const val = params[key];
-            if (typeof val === 'object' && val && !Array.isArray(val)) {
-                keys.push(key);
-                return toUrlEncoded(val, keys, Array.isArray(val));
+    //@ts-expect-error type
+    function is(className, object) {
+        return Object.prototype.toString.call(object) === '[object ' + className + ']';
+    }
+    const DataEncoder = function () {
+        //@ts-expect-error type
+        this.levels = [];
+        //@ts-expect-error type
+        this.actualKey = null;
+    };
+    //@ts-expect-error type
+    DataEncoder.prototype.__dataEncoding = function (data) {
+        let uriPart = '';
+        const levelsSize = this.levels.length;
+        if (levelsSize) {
+            uriPart = this.levels[0];
+            for (let c = 1; c < levelsSize; c++) {
+                uriPart += '[' + this.levels[c] + ']';
             }
-            else if (typeof val === 'string') {
-                let tKey = key;
-                if (keys.length > 0) {
-                    const tKeys = isArray ? keys : [...keys, key];
-                    tKey = tKeys.reduce((str, k) => {
-                        return str === '' ? k : `${str}[${k}]`;
-                    }, '');
-                }
-                if (isArray) {
-                    return `${tKey}[]=${val}`;
-                }
-                else {
-                    return `${tKey}=${encodeURIComponent(val)}`;
-                }
+        }
+        let finalString = '';
+        if (is('Object', data)) {
+            const keys = Object.keys(data);
+            const l = keys.length;
+            for (let a = 0; a < l; a++) {
+                const key = keys[a];
+                const value = data[key];
+                this.actualKey = key;
+                this.levels.push(this.actualKey);
+                finalString += this.__dataEncoding(value);
             }
-            else {
-                throw new Error('Unsupported params type');
+        }
+        else if (is('Array', data)) {
+            if (!this.actualKey)
+                throw new Error("Directly passed array does not work");
+            const aSize = data.length;
+            for (let b = 0; b < aSize; b++) {
+                const aVal = data[b];
+                this.levels.push(b);
+                finalString += this.__dataEncoding(aVal);
             }
-        }).join('&');
+        }
+        else {
+            finalString += uriPart + '=' + encodeURIComponent(data) + '&';
+        }
+        this.levels.pop();
+        return finalString;
+    };
+    //@ts-expect-error type
+    DataEncoder.prototype.encode = function (data) {
+        if (!is('Object', data) || !Object.keys(data).length)
+            return null;
+        return this.__dataEncoding(data).slice(0, -1);
+    };
+    const toUrlEncoded = (params) => {
+        //@ts-expect-error type
+        const encoder = new DataEncoder();
+        console.log(encoder.encode(params));
+        return encoder.encode(params);
     };
     const getAuthHeader = () => {
         if (!config.token) {
@@ -96,7 +129,6 @@ export const useApiRest = (config) => {
     const get = (endpoint, params, configOverride) => new Promise((resolve, reject) => {
         let url = getUrl(endpoint, configOverride);
         if (params && typeof params === 'object') {
-            // remove empty params
             for (const key in params) {
                 if (typeof params[key] === 'undefined' ||
                     (['filterBy', 'orderBy'].includes(key) && !Object.keys(params[key] || {}).length) ||
@@ -104,9 +136,6 @@ export const useApiRest = (config) => {
                     (key === 'search' && params[key] === '')) {
                     delete params[key];
                 }
-            }
-            if (params.groups && Array.isArray(params.groups)) {
-                params.groups = params.groups.join(',');
             }
             const paramsEncoded = toUrlEncoded(params);
             if (paramsEncoded) {
@@ -131,6 +160,7 @@ export const useApiRest = (config) => {
     });
     const post = (endpoint, data, configOverride) => {
         return new Promise((resolve, reject) => {
+            var _a, _b;
             const url = getUrl(endpoint, configOverride);
             const abortController = (configOverride === null || configOverride === void 0 ? void 0 : configOverride.abortController) || new AbortController();
             let resp;
@@ -140,7 +170,7 @@ export const useApiRest = (config) => {
             fetch(url, {
                 method: 'POST',
                 signal: abortController.signal,
-                headers: Object.assign({ 'Content-Type': 'application/json' }, getAuthHeader()),
+                headers: Object.assign({ 'Content-Type': ((_b = (_a = config.xhrOverride) === null || _a === void 0 ? void 0 : _a.post) === null || _b === void 0 ? void 0 : _b.contentType) || config.xhrDefaults.contentType }, getAuthHeader()),
                 body: JSON.stringify(data)
             })
                 .then(response => {
@@ -155,6 +185,7 @@ export const useApiRest = (config) => {
     };
     const put = (endpoint, data, id, configOverride) => {
         return new Promise((resolve, reject) => {
+            var _a, _b;
             let url = getUrl(endpoint, configOverride);
             const abortController = (configOverride === null || configOverride === void 0 ? void 0 : configOverride.abortController) || new AbortController();
             let resp;
@@ -167,7 +198,35 @@ export const useApiRest = (config) => {
             fetch(url, {
                 method: 'PUT',
                 signal: abortController.signal,
-                headers: Object.assign({ 'Content-Type': 'application/json' }, getAuthHeader()),
+                headers: Object.assign({ 'Content-Type': ((_b = (_a = config.xhrOverride) === null || _a === void 0 ? void 0 : _a.put) === null || _b === void 0 ? void 0 : _b.contentType) || config.xhrDefaults.contentType }, getAuthHeader()),
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                resp = response;
+                return handleResponse(response, configOverride);
+            })
+                .then(result => resolve(result))
+                .catch((error) => {
+                reject(config.errorHandler ? config.errorHandler(error, resp) : error);
+            });
+        });
+    };
+    const patch = (endpoint, data, id, configOverride) => {
+        return new Promise((resolve, reject) => {
+            var _a, _b;
+            let url = getUrl(endpoint, configOverride);
+            const abortController = (configOverride === null || configOverride === void 0 ? void 0 : configOverride.abortController) || new AbortController();
+            let resp;
+            if (typeof data !== 'object') {
+                data = {};
+            }
+            if (typeof id !== 'undefined') {
+                url += '/' + id;
+            }
+            fetch(url, {
+                method: 'PATCH',
+                signal: abortController.signal,
+                headers: Object.assign({ 'Content-Type': ((_b = (_a = config.xhrOverride) === null || _a === void 0 ? void 0 : _a.patch) === null || _b === void 0 ? void 0 : _b.contentType) || config.xhrDefaults.contentType }, getAuthHeader()),
                 body: JSON.stringify(data)
             })
                 .then(response => {
@@ -246,6 +305,7 @@ export const useApiRest = (config) => {
         get,
         post,
         put,
+        patch,
         remove,
         poll,
         pollCancel

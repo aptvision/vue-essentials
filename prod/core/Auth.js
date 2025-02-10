@@ -1,5 +1,4 @@
-// @ts-ignore
-import VueJwtDecode from 'vue-jwt-decode';
+import { decode } from 'vue-jwt-decode';
 export const useAuth = (config) => {
     const saveToken = (token) => {
         if (!doVerifyToken(token)) {
@@ -80,7 +79,7 @@ export const useAuth = (config) => {
     const toUrlEncoded = (obj) => {
         return Object.keys(obj)
             .filter(x => x)
-            .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`)
+            .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(String(obj[key]))}`)
             .join('&');
     };
     const exchangeCodeForToken = (queryString) => {
@@ -142,7 +141,7 @@ export const useAuth = (config) => {
         return typeof getDecodedToken(token)?.exp !== 'undefined';
     };
     const getDecodedToken = (token) => {
-        return VueJwtDecode.decode(token);
+        return decode(token);
     };
     const getAuthHeader = () => {
         const token = localStorage.getItem(config.authTokenName);

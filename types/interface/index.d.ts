@@ -2,7 +2,7 @@ import { IDateHelpersConfig } from "./DateHelpersInterface";
 import { TRestApiOptionsOverride, ApiErrorInterface, RestApiResponseInterface, ResponseMeta } from '../core/ApiRest';
 import { IAuthToken } from '../types/core/Auth';
 type JsonObject<T = unknown> = {
-    [Key in string]: T;
+    [key: string]: T | JsonObject<T> | TScalar | TScalar[];
 };
 type TScalar = string | number | boolean | string[] | number[];
 type NonEmptyString<T> = T extends '' ? never : T;
