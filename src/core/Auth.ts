@@ -1,4 +1,5 @@
-import { decode } from 'vue-jwt-decode'
+import VueJwtDecode from 'vue-jwt-decode'
+
 import { JsonObject } from '../interface'
 import { IAuthToken, LocationQuery } from '../types/core/Auth'
 
@@ -176,7 +177,7 @@ export const useAuth = (config: IAuthConfig) => {
     return typeof getDecodedToken(token)?.exp !== 'undefined'
   }
   const getDecodedToken = (token: string):DecodedToken => {
-    return decode(token)
+    return VueJwtDecode.decode(token)
   }
   const getAuthHeader = () => {
     const token = localStorage.getItem(config.authTokenName)
