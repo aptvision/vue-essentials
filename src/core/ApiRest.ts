@@ -1,9 +1,6 @@
 import { JsonObject } from '../interface'
 export class AuthorizationException extends Error {}
 export type TErrorHandler = (error: Error, response?: Response) => unknown
-export interface IxhrOption {
-  contentType: string
-}
 export interface IAptvisionApiRestConfig {
   userId: string;
   organizationId: string;
@@ -16,14 +13,6 @@ export interface IAptvisionApiRestConfig {
   prefixRoutesWithUserId?: boolean;
   unauthorizedHandler?: () => void;
   errorHandler?: TErrorHandler;
-  xhrDefaults: IxhrOption
-  xhrOverride?: {
-    get?: IxhrOption
-    post?: IxhrOption
-    put?: IxhrOption
-    patch?: IxhrOption
-    delete?: IxhrOption
-  }
 }
 export interface ApiErrorInterface {
   status: number;
@@ -212,7 +201,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
       fetch(url, {
         method: 'POST',
         signal: abortController.signal,
-        headers: Object.assign({ 'Content-Type': config.xhrOverride?.post?.contentType || config.xhrDefaults.contentType }, getAuthHeader()),
+        headers: Object.assign({ 'Content-Type': 'application/ld+json' }, getAuthHeader()),
         body: JSON.stringify(data)
       })
         .then(response => {
@@ -239,7 +228,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
       fetch(url, {
         method: 'PUT',
         signal: abortController.signal,
-        headers: Object.assign({ 'Content-Type': config.xhrOverride?.put?.contentType || config.xhrDefaults.contentType }, getAuthHeader()),
+        headers: Object.assign({ 'Content-Type': 'application/ld+json' }, getAuthHeader()),
         body: JSON.stringify(data)
       })
         .then(response => {
@@ -267,7 +256,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
       fetch(url, {
         method: 'PATCH',
         signal: abortController.signal,
-        headers: Object.assign({ 'Content-Type': config.xhrOverride?.patch?.contentType || config.xhrDefaults.contentType }, getAuthHeader()),
+        headers: Object.assign({ 'Content-Type': 'application/merge-patch+json', 'Accept': '*/*' }, getAuthHeader()),
         body: JSON.stringify(data)
       })
         .then(response => {
