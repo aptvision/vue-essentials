@@ -106,7 +106,6 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
   const toUrlEncoded = (params: JsonObject): string => {
     //@ts-expect-error type
     const encoder = new DataEncoder();
-    console.log(encoder.encode(params))
     return encoder.encode(params);
   }
   const getAuthHeader = () => {
@@ -123,7 +122,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
       }
       throw new AuthorizationException('401 - unauthorized')
     }
-    if (response.status !== 200) {
+    if (![200, 201].includes(response.status)) {
       throw new Error(response.statusText)
     }
     switch (conf.responseType) {
