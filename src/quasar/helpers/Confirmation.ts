@@ -1,5 +1,5 @@
 import { Dialog, Dark } from 'quasar'
-import type { QDialogOptions } from 'quasar'
+import type { QBtnProps, QDialogOptions } from 'quasar'
 import { JsonObject } from '../../interface'
 import { useCommonHelpers } from '../../core/Common'
 import '../quasar-init.js'
@@ -19,7 +19,7 @@ interface AdditionalOptionOptions {
 export interface ConfirmationConfig {
   title: string;
   message: string;
-  cancel?: boolean;
+  cancel?: QBtnProps;
   dark?: boolean;
   onOk?: () => void | undefined;
   onCancel?: () => void | undefined;
