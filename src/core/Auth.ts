@@ -98,13 +98,13 @@ export const useAuth = (config: IAuthConfig) => {
     }
   }
   const logOut = () => {
-    console.log('logging out');
     removeToken()
     if (config.logOut) {
       config.logOut(defaultLogOut)
       return
     }
     defaultLogOut()
+    throw new Error('Logging out...')
   }
   const toUrlEncoded = (obj: JsonObject<string>) => {
     return Object.keys(obj)
@@ -165,10 +165,16 @@ export const useAuth = (config: IAuthConfig) => {
       })
     })
   }
-  const verifyToken = (): void => {
-    if (!doVerifyToken(localStorage.getItem(config.authTokenName) || '')) {
-      logOut()
-    }
+  const verifyToken = (): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      if (!doVerifyToken(localStorage.getItem(config.authTokenName) || '')) {
+        logOut()
+        reject()
+      } else {
+        resolve()
+      }
+    })
+
   }
   const doVerifyToken = (token: string) => {
     if (!token) {
