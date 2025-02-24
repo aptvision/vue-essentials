@@ -122,7 +122,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
       if(!config.organizationId){
         throw Error('Missing organizationId')
       }
-      headers[ 'x-organization-id'] = config.organizationId
+      headers['x-organization-id'] = config.organizationId
     }
     return headers
   }
