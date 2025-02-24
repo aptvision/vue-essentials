@@ -43,7 +43,7 @@ export interface RestApiResponseInterface<T = any> {
     data: T;
     meta: ResponseMeta<any>;
 }
-export type TRestApiOptionsOverride = Partial<Pick<IAptvisionApiRestConfig, 'apiUrl' | 'responseType' | 'prefixRoutesWithUserId' | 'prefixRoutesWithApiVersion' | 'prefixRoutesWithOrganizationId'>> & {
+export type TRestApiOptionsOverride = Partial<Pick<IAptvisionApiRestConfig, 'apiUrl' | 'responseType' | 'prefixRoutesWithUserId' | 'prefixRoutesWithApiVersion' | 'prefixRoutesWithOrganizationId' | 'includeOrganizationIdHeader'>> & {
     abortController?: AbortController;
 };
 export declare const useApiRest: (config: IAptvisionApiRestConfig) => {

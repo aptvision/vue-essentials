@@ -111,18 +111,20 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
     console.log(encoder.encode(params))
     return encoder.encode(params);
   }
-  const getHeaders = () => {
-    if (!config.token) {
+  const getHeaders = (configOverride: TRestApiOptionsOverride = {}) => {
+    const conf = Object.assign({}, config, configOverride || {})
+    if (!conf.token) {
       throw new AuthorizationException('Failed restoring local token')
     }
-    const headers: { Authorization: string; [key: string]: string } = { 
-      Authorization: 'Bearer ' + config.token 
+    const headers: JsonObject = { 
+      Authorization: 'Bearer ' + conf.token 
     }
-    if(config.includeOrganizationIdHeader){
-      if(!config.organizationId){
+    if(conf.includeOrganizationIdHeader){
+      console.log(conf)
+      if(!conf.organizationId){
         throw Error('Missing organizationId')
       }
-      headers['x-organization-id'] = config.organizationId
+      headers['x-organization-id'] = conf.organizationId
     }
     return headers
   }
@@ -201,7 +203,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
     fetch(url, {
       method: 'GET',
       signal: abortController.signal,
-      headers: getHeaders()
+      headers: getHeaders(configOverride)
     })
       .then(response => {
         resp = response
@@ -223,7 +225,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
       fetch(url, {
         method: 'POST',
         signal: abortController.signal,
-        headers: Object.assign({ 'Content-Type': config.xhrOverride?.post?.contentType || config.xhrDefaults.contentType }, getHeaders()),
+        headers: Object.assign({ 'Content-Type': config.xhrOverride?.post?.contentType || config.xhrDefaults.contentType }, getHeaders(configOverride)),
         body: JSON.stringify(data)
       })
         .then(response => {
@@ -250,7 +252,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
       fetch(url, {
         method: 'PUT',
         signal: abortController.signal,
-        headers: Object.assign({ 'Content-Type': config.xhrOverride?.put?.contentType || config.xhrDefaults.contentType }, getHeaders()),
+        headers: Object.assign({ 'Content-Type': config.xhrOverride?.put?.contentType || config.xhrDefaults.contentType }, getHeaders(configOverride)),
         body: JSON.stringify(data)
       })
         .then(response => {
@@ -278,7 +280,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
       fetch(url, {
         method: 'PATCH',
         signal: abortController.signal,
-        headers: Object.assign({ 'Content-Type': config.xhrOverride?.patch?.contentType || config.xhrDefaults.contentType }, getHeaders()),
+        headers: Object.assign({ 'Content-Type': config.xhrOverride?.patch?.contentType || config.xhrDefaults.contentType }, getHeaders(configOverride)),
         body: JSON.stringify(data)
       })
         .then(response => {
@@ -299,7 +301,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
       fetch(url, {
         method: 'DELETE',
         signal: abortController.signal,
-        headers: getHeaders()
+        headers: getHeaders(configOverride)
       })
         .then(response => {
           resp = response
@@ -329,7 +331,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
         let resp: Response|undefined
         fetch(url, {
           method: 'GET',
-          headers: getHeaders(),
+          headers: getHeaders(configOverride),
           signal: abortController.signal
         })
           .then(response => {

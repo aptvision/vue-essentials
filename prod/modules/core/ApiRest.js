@@ -72,11 +72,20 @@ export const useApiRest = (config) => {
         console.log(encoder.encode(params));
         return encoder.encode(params);
     };
-    const getAuthHeader = () => {
+    const getHeaders = () => {
         if (!config.token) {
             throw new AuthorizationException('Failed restoring local token');
         }
-        return { Authorization: 'Bearer ' + config.token };
+        const headers = {
+            Authorization: 'Bearer ' + config.token
+        };
+        if (config.includeOrganizationIdHeader) {
+            if (!config.organizationId) {
+                throw Error('Missing organizationId');
+            }
+            headers['x-organization-id'] = config.organizationId;
+        }
+        return headers;
     };
     const handleResponse = (response, configOverride) => __awaiter(void 0, void 0, void 0, function* () {
         const conf = Object.assign({}, config, configOverride || {});
@@ -147,7 +156,7 @@ export const useApiRest = (config) => {
         fetch(url, {
             method: 'GET',
             signal: abortController.signal,
-            headers: getAuthHeader()
+            headers: getHeaders()
         })
             .then(response => {
             resp = response;
@@ -170,7 +179,7 @@ export const useApiRest = (config) => {
             fetch(url, {
                 method: 'POST',
                 signal: abortController.signal,
-                headers: Object.assign({ 'Content-Type': ((_b = (_a = config.xhrOverride) === null || _a === void 0 ? void 0 : _a.post) === null || _b === void 0 ? void 0 : _b.contentType) || config.xhrDefaults.contentType }, getAuthHeader()),
+                headers: Object.assign({ 'Content-Type': ((_b = (_a = config.xhrOverride) === null || _a === void 0 ? void 0 : _a.post) === null || _b === void 0 ? void 0 : _b.contentType) || config.xhrDefaults.contentType }, getHeaders()),
                 body: JSON.stringify(data)
             })
                 .then(response => {
@@ -198,7 +207,7 @@ export const useApiRest = (config) => {
             fetch(url, {
                 method: 'PUT',
                 signal: abortController.signal,
-                headers: Object.assign({ 'Content-Type': ((_b = (_a = config.xhrOverride) === null || _a === void 0 ? void 0 : _a.put) === null || _b === void 0 ? void 0 : _b.contentType) || config.xhrDefaults.contentType }, getAuthHeader()),
+                headers: Object.assign({ 'Content-Type': ((_b = (_a = config.xhrOverride) === null || _a === void 0 ? void 0 : _a.put) === null || _b === void 0 ? void 0 : _b.contentType) || config.xhrDefaults.contentType }, getHeaders()),
                 body: JSON.stringify(data)
             })
                 .then(response => {
@@ -226,7 +235,7 @@ export const useApiRest = (config) => {
             fetch(url, {
                 method: 'PATCH',
                 signal: abortController.signal,
-                headers: Object.assign({ 'Content-Type': ((_b = (_a = config.xhrOverride) === null || _a === void 0 ? void 0 : _a.patch) === null || _b === void 0 ? void 0 : _b.contentType) || config.xhrDefaults.contentType }, getAuthHeader()),
+                headers: Object.assign({ 'Content-Type': ((_b = (_a = config.xhrOverride) === null || _a === void 0 ? void 0 : _a.patch) === null || _b === void 0 ? void 0 : _b.contentType) || config.xhrDefaults.contentType }, getHeaders()),
                 body: JSON.stringify(data)
             })
                 .then(response => {
@@ -247,7 +256,7 @@ export const useApiRest = (config) => {
             fetch(url, {
                 method: 'DELETE',
                 signal: abortController.signal,
-                headers: getAuthHeader()
+                headers: getHeaders()
             })
                 .then(response => {
                 resp = response;
@@ -277,7 +286,7 @@ export const useApiRest = (config) => {
                 let resp;
                 fetch(url, {
                     method: 'GET',
-                    headers: getAuthHeader(),
+                    headers: getHeaders(),
                     signal: abortController.signal
                 })
                     .then(response => {
