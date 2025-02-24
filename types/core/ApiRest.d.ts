@@ -15,6 +15,7 @@ export interface IAptvisionApiRestConfig {
     prefixRoutesWithApiVersion?: boolean;
     prefixRoutesWithOrganizationId?: boolean;
     prefixRoutesWithUserId?: boolean;
+    includeOrganizationIdHeader?: boolean;
     unauthorizedHandler?: () => void;
     errorHandler?: TErrorHandler;
     xhrDefaults: IxhrOption;

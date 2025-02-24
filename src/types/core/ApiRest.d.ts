@@ -11,6 +11,7 @@ export interface IAptvisionApiRestConfig {
     responseType: 'json' | 'blob';
     prefixRoutesWithApiVersion?: boolean;
     prefixRoutesWithOrganizationId?: boolean;
+    includeOrganizationIdHeader?: boolean;
     prefixRoutesWithUserId?: boolean;
     unauthorizedHandler?: () => void;
     errorHandler?: TErrorHandler;

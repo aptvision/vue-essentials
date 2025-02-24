@@ -14,6 +14,7 @@ export interface IAptvisionApiRestConfig {
   prefixRoutesWithApiVersion?: boolean;
   prefixRoutesWithOrganizationId?: boolean;
   prefixRoutesWithUserId?: boolean;
+  includeOrganizationIdHeader?: boolean
   unauthorizedHandler?: () => void;
   errorHandler?: TErrorHandler;
   xhrDefaults: IxhrOption
@@ -46,7 +47,8 @@ export type TRestApiOptionsOverride = Partial<Pick<IAptvisionApiRestConfig,
   'responseType'|
   'prefixRoutesWithUserId'|
   'prefixRoutesWithApiVersion'|
-  'prefixRoutesWithOrganizationId'
+  'prefixRoutesWithOrganizationId'|
+  'includeOrganizationIdHeader'
 >>&{
   abortController?: AbortController
 }
@@ -112,6 +114,12 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
   const getAuthHeader = () => {
     if (!config.token) {
       throw new AuthorizationException('Failed restoring local token')
+    }
+    if(config.includeOrganizationIdHeader){
+      if(!config.organizationId){
+        throw Error('Missing organizationId')
+      }
+      return { Authorization: 'Bearer ' + config.token, 'x-organization-id': config.organizationId }
     }
     return { Authorization: 'Bearer ' + config.token }
   }
