@@ -116,7 +116,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
     if (!conf.token) {
       throw new AuthorizationException('Failed restoring local token')
     }
-    const headers: JsonObject = { 
+    const headers: {Authorization: string; [key: string]: string} = { 
       Authorization: 'Bearer ' + conf.token 
     }
     if(conf.includeOrganizationIdHeader){
