@@ -102,7 +102,7 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
   }
 
   const subtractFromDate = (dateString: string | Date | boolean | null = null, options: Record<string, number>) => {
-    return sub(dateString || new Date() as any, options)
+    return sub(dateString ? (dateString as string | Date) : new Date(), options)
   }
 
   const getDayAndTime = (dateString: string | Date, shortCutDay:boolean = false) => {
@@ -119,9 +119,9 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     return result
   }
 
-  const useTimeAgo = (dateString: string | Date | boolean | null = null, options: Record<string, any>) => {
+  const useTimeAgo = (dateString: string | Date | boolean | null = null, options: Record<string, unknown>) => {
     const currentDate = new Date()
-    const baseDate = sub(dateString || new Date() as any, options)
+    const baseDate = sub(dateString ? (dateString as string | Date) : new Date(), options)
     return formatDistance(
       baseDate,
       currentDate,
@@ -149,7 +149,7 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     return isValid(Date.parse(dateString))
   }
 
-  const doesIncludeTime = (dateString: any) => {
+  const doesIncludeTime = (dateString: string) => {
     const parsedDate: Date = parseISO(dateString)
     if (isValid(parsedDate)) {
       return !isEqual(parsedDate, startOfDay(parsedDate))
