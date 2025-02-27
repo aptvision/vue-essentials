@@ -108,7 +108,6 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
   const toUrlEncoded = (params: JsonObject): string => {
     //@ts-expect-error type
     const encoder = new DataEncoder();
-    console.log(encoder.encode(params))
     return encoder.encode(params);
   }
   const getHeaders = (configOverride: TRestApiOptionsOverride = {}) => {
@@ -120,7 +119,6 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
       Authorization: 'Bearer ' + conf.token 
     }
     if(conf.includeOrganizationIdHeader){
-      console.log(conf)
       if(!conf.organizationId){
         throw Error('Missing organizationId')
       }
@@ -136,7 +134,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
       }
       throw new AuthorizationException('401 - unauthorized')
     }
-    if (response.status !== 200) {
+    if (response.status !== 200 && response.status !== 201) {
       throw new Error(response.statusText)
     }
     switch (conf.responseType) {
