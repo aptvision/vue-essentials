@@ -10,6 +10,15 @@ export function useDateHelpers(config) {
     const formatTime = ((_d = config === null || config === void 0 ? void 0 : config.userDateFormat) === null || _d === void 0 ? void 0 : _d.time) || 'HH:mm';
     const formatDateISO = 'YYYY-MM-DD';
     const formatDateTimeISO = 'YYYY-MM-DDTHH:mm:ss';
+    const FORMAT_MAP = {
+        'YYYY': 'yyyy',
+        'YY': 'yy',
+        'MM': 'MM',
+        'DD': 'dd',
+        'HH': 'HH',
+        'mm': 'mm',
+        'ss': 'ss'
+    };
     const dayShortcuts = {
         pl: {
             poniedziałek: 'pon',
@@ -38,6 +47,9 @@ export function useDateHelpers(config) {
             szombat: 'szo',
             vasárnap: 'vas'
         }
+    };
+    const convertFormatToDateFns = (quasarFormat) => {
+        return quasarFormat.replace(/YYYY|YY|MM|DD|HH|mm|ss/g, match => FORMAT_MAP[match] || match);
     };
     const correctLocale = () => {
         const localeCode = (config === null || config === void 0 ? void 0 : config.localeCode) || 'en_GB.utf8';
@@ -132,6 +144,9 @@ export function useDateHelpers(config) {
         }
         return false;
     };
+    const addToDate = (dateString = null, options) => {
+        return date.addToDate(dateString ? dateString : new Date(), options);
+    };
     return {
         format: {
             date: formatDate,
@@ -158,6 +173,9 @@ export function useDateHelpers(config) {
         currentDateSql,
         typeOptions,
         relativeDateOptions,
-        getDayAndTime
+        getDayAndTime,
+        correctLocale,
+        addToDate,
+        convertFormatToDateFns
     };
 }

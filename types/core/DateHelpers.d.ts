@@ -56,4 +56,10 @@ export declare function useDateHelpers(config?: IDateHelpersConfig): {
         day: string;
         time: string;
     };
+    correctLocale: () => {
+        localeCode: import("date-fns").Locale;
+        lang: string;
+    };
+    addToDate: (dateString: (string | Date | null) | undefined, options: Record<string, number>) => Date;
+    convertFormatToDateFns: (quasarFormat: string) => string;
 };
