@@ -60,7 +60,6 @@ export const useApiRest = (config) => {
     const toUrlEncoded = (params) => {
         //@ts-expect-error type
         const encoder = new DataEncoder();
-        console.log(encoder.encode(params));
         return encoder.encode(params);
     };
     const getHeaders = (configOverride = {}) => {
@@ -72,7 +71,6 @@ export const useApiRest = (config) => {
             Authorization: 'Bearer ' + conf.token
         };
         if (conf.includeOrganizationIdHeader) {
-            console.log(conf);
             if (!conf.organizationId) {
                 throw Error('Missing organizationId');
             }
@@ -88,7 +86,7 @@ export const useApiRest = (config) => {
             }
             throw new AuthorizationException('401 - unauthorized');
         }
-        if (response.status !== 200) {
+        if (response.status !== 200 && response.status !== 201) {
             throw new Error(response.statusText);
         }
         switch (conf.responseType) {

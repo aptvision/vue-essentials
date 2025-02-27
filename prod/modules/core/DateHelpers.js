@@ -89,7 +89,7 @@ export function useDateHelpers(config) {
         return differenceInYears(convertDate(dateString1), convertDate(dateString2));
     };
     const subtractFromDate = (dateString = null, options) => {
-        return sub(dateString || new Date(), options);
+        return sub(dateString ? dateString : new Date(), options);
     };
     const getDayAndTime = (dateString, shortCutDay = false) => {
         const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
@@ -105,7 +105,7 @@ export function useDateHelpers(config) {
     };
     const useTimeAgo = (dateString = null, options) => {
         const currentDate = new Date();
-        const baseDate = sub(dateString || new Date(), options);
+        const baseDate = sub(dateString ? dateString : new Date(), options);
         return formatDistance(baseDate, currentDate, Object.assign({ addSuffix: true, locale: correctLocale().localeCode }, options));
     };
     const typeOptions = ref([

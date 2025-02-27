@@ -16,7 +16,7 @@ export declare function useDateHelpers(config?: IDateHelpersConfig): {
     humanDateTimeFromTimestamp: (dateString: number) => string;
     humanDateTimeSecFromTimestamp: (dateString: number) => string;
     currentYear: () => string;
-    subtractFromDate: (dateString: (string | Date | boolean | null) | undefined, options: Record<string, number>) => any;
+    subtractFromDate: (dateString: (string | Date | boolean | null) | undefined, options: Record<string, number>) => Date;
     operatorOptions: import("vue").Ref<{
         value: string;
         label: string;
@@ -28,29 +28,29 @@ export declare function useDateHelpers(config?: IDateHelpersConfig): {
         label: string;
     }[]>;
     isValidDate: (dateString: string) => boolean;
-    doesIncludeTime: (dateString: any) => boolean;
-    useTimeAgo: (dateString: (string | Date | boolean | null) | undefined, options: Record<string, any>) => string;
+    doesIncludeTime: (dateString: string) => boolean;
+    useTimeAgo: (dateString: (string | Date | boolean | null) | undefined, options: Record<string, unknown>) => string;
     time: (dateString: string) => string;
     currentDateSql: () => string;
     typeOptions: import("vue").Ref<{
         value: string;
-        label: any;
+        label: string;
     }[], {
         value: string;
-        label: any;
+        label: string;
     }[] | {
         value: string;
-        label: any;
+        label: string;
     }[]>;
     relativeDateOptions: import("vue").Ref<{
         value: string;
-        label: any;
+        label: string;
     }[], {
         value: string;
-        label: any;
+        label: string;
     }[] | {
         value: string;
-        label: any;
+        label: string;
     }[]>;
     getDayAndTime: (dateString: string | Date, shortCutDay?: boolean) => {
         day: string;
