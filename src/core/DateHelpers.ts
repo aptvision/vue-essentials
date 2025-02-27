@@ -12,6 +12,15 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
   const formatDateISO = 'YYYY-MM-DD'
   const formatDateTimeISO = 'YYYY-MM-DDTHH:mm:ss'
 
+  const FORMAT_MAP = <Record<string, string>>{
+    'YYYY': 'yyyy',
+    'YY': 'yy',
+    'MM': 'MM',
+    'DD': 'dd',
+    'HH': 'HH',
+    'mm': 'mm',
+    'ss': 'ss'
+  };
   const dayShortcuts: Record<string, Record<string, string>> = {
     pl: {
       poniedziałek: 'pon',
@@ -42,7 +51,9 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     }
   };
 
-
+  const convertFormatToDateFns = (quasarFormat:string) => {
+    return quasarFormat.replace(/YYYY|YY|MM|DD|HH|mm|ss/g, match => FORMAT_MAP[match] || match);
+  };
   const correctLocale = () => {
     const localeCode = config?.localeCode || 'en_GB.utf8'
     switch (localeCode) {
@@ -157,6 +168,12 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     return false
   }
 
+  const addToDate = (dateString: string | Date | null = null, options: Record<string, number>) => {
+    return date.addToDate(dateString ? (dateString as string | Date) : new Date(), options);
+  }
+  
+  
+
   return {
     format: {
       date: formatDate,
@@ -183,6 +200,9 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     currentDateSql,
     typeOptions,
     relativeDateOptions,
-    getDayAndTime
+    getDayAndTime,
+    correctLocale,
+    addToDate,
+    convertFormatToDateFns
   }
 }
