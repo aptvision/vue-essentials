@@ -47,7 +47,7 @@ export function useDateHelpers(config) {
             vasárnap: 'vas'
         }
     };
-    const convertFormatToDateFns = (quasarFormat) => {
+    const convertDateFormatQuasarToDateFns = (quasarFormat) => {
         return quasarFormat.replace(/YYYY|YY|MM|DD|HH|mm|ss/g, match => FORMAT_MAP[match] || match);
     };
     const correctLocale = () => {
@@ -99,8 +99,8 @@ export function useDateHelpers(config) {
     const isDifferenceInYears = (dateString1, dateString2) => {
         return differenceInYears(convertDate(dateString1), convertDate(dateString2));
     };
-    const subtractFromDate = (dateString = null, options) => {
-        return sub(dateString ? dateString : new Date(), options);
+    const substractFromDate = (dateString, options) => {
+        return sub(dateString, options);
     };
     const getDayAndTime = (dateString, shortCutDay = false) => {
         const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
@@ -143,8 +143,8 @@ export function useDateHelpers(config) {
         }
         return false;
     };
-    const addToDate = (dateString = null, options) => {
-        return date.addToDate(dateString ? dateString : new Date(), options);
+    const addToDate = (dateString, options) => {
+        return date.addToDate(dateString, options);
     };
     return {
         format: {
@@ -163,7 +163,7 @@ export function useDateHelpers(config) {
         humanDateTimeFromTimestamp,
         humanDateTimeSecFromTimestamp,
         currentYear,
-        subtractFromDate,
+        substractFromDate,
         operatorOptions,
         isValidDate,
         doesIncludeTime,
@@ -175,6 +175,6 @@ export function useDateHelpers(config) {
         getDayAndTime,
         correctLocale,
         addToDate,
-        convertFormatToDateFns
+        convertDateFormatQuasarToDateFns
     };
 }
