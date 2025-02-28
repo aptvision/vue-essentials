@@ -3,6 +3,7 @@ import { format, differenceInYears, fromUnixTime, sub, isValid, parseISO, isEqua
 import { date } from 'quasar'
 import { pl, hu, enGB } from 'date-fns/locale' // INFO: hardoced-locale-codes from date fns, you can add another in future
 import { IDateHelpersConfig } from '../interface/DateHelpersInterface'
+import { DateOptions } from 'quasar/dist/types/utils/date'
 
 export function useDateHelpers (config?:IDateHelpersConfig) {
   const formatDate = config?.userDateFormat?.date || 'YYYY/MM/DD'
@@ -51,7 +52,7 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     }
   };
 
-  const convertFormatToDateFns = (quasarFormat:string) => {
+  const convertDateFormatQuasarToDateFns = (quasarFormat:string) => {
     return quasarFormat.replace(/YYYY|YY|MM|DD|HH|mm|ss/g, match => FORMAT_MAP[match] || match);
   };
   const correctLocale = () => {
@@ -112,8 +113,8 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     return differenceInYears(convertDate(dateString1), convertDate(dateString2))
   }
 
-  const subtractFromDate = (dateString: string | Date | boolean | null = null, options: Record<string, number>) => {
-    return sub(dateString ? (dateString as string | Date) : new Date(), options)
+  const substractFromDate = (dateString: string | Date, options: DateOptions) => {
+    return sub(dateString, options)
   }
 
   const getDayAndTime = (dateString: string | Date, shortCutDay:boolean = false) => {
@@ -168,11 +169,9 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     return false
   }
 
-  const addToDate = (dateString: string | Date | null = null, options: Record<string, number>) => {
-    return date.addToDate(dateString ? (dateString as string | Date) : new Date(), options);
+  const addToDate = (dateString: string | Date, options: DateOptions) => {
+    return date.addToDate(dateString, options)
   }
-  
-  
 
   return {
     format: {
@@ -191,7 +190,7 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     humanDateTimeFromTimestamp,
     humanDateTimeSecFromTimestamp,
     currentYear,
-    subtractFromDate,
+    substractFromDate,
     operatorOptions,
     isValidDate,
     doesIncludeTime,
@@ -203,6 +202,6 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     getDayAndTime,
     correctLocale,
     addToDate,
-    convertFormatToDateFns
+    convertDateFormatQuasarToDateFns
   }
 }
