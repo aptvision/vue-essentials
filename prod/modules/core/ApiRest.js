@@ -95,7 +95,7 @@ export const useApiRest = (config) => {
             }
             throw new AuthorizationException('401 - unauthorized');
         }
-        if (response.status !== 200 && response.status !== 201) {
+        if (![200, 201].includes(response.status)) {
             throw new Error(response.statusText);
         }
         switch (conf.responseType) {
