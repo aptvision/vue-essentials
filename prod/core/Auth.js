@@ -68,13 +68,13 @@ export const useAuth = (config) => {
         }
     };
     const logOut = () => {
-        console.log('logging out');
         removeToken();
         if (config.logOut) {
             config.logOut(defaultLogOut);
             return;
         }
         defaultLogOut();
+        throw new Error('Logging out...');
     };
     const toUrlEncoded = (obj) => {
         return Object.keys(obj)
@@ -130,9 +130,15 @@ export const useAuth = (config) => {
         });
     };
     const verifyToken = () => {
-        if (!doVerifyToken(localStorage.getItem(config.authTokenName) || '')) {
-            logOut();
-        }
+        return new Promise((resolve, reject) => {
+            if (!doVerifyToken(localStorage.getItem(config.authTokenName) || '')) {
+                logOut();
+                reject();
+            }
+            else {
+                resolve();
+            }
+        });
     };
     const doVerifyToken = (token) => {
         if (!token) {

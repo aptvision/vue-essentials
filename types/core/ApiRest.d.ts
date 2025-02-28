@@ -15,7 +15,9 @@ export interface IAptvisionApiRestConfig {
     prefixRoutesWithApiVersion?: boolean;
     prefixRoutesWithOrganizationId?: boolean;
     prefixRoutesWithUserId?: boolean;
-    unauthorizedHandler?: () => void;
+    includeOrganizationIdHeader?: boolean;
+    handlerUnauthorized?: () => void;
+    handlerForbidden?: () => void;
     errorHandler?: TErrorHandler;
     xhrDefaults: IxhrOption;
     xhrOverride?: {
@@ -42,7 +44,7 @@ export interface RestApiResponseInterface<T = any> {
     data: T;
     meta: ResponseMeta<any>;
 }
-export type TRestApiOptionsOverride = Partial<Pick<IAptvisionApiRestConfig, 'apiUrl' | 'responseType' | 'prefixRoutesWithUserId' | 'prefixRoutesWithApiVersion' | 'prefixRoutesWithOrganizationId'>> & {
+export type TRestApiOptionsOverride = Partial<Pick<IAptvisionApiRestConfig, 'apiUrl' | 'responseType' | 'prefixRoutesWithUserId' | 'prefixRoutesWithApiVersion' | 'prefixRoutesWithOrganizationId' | 'includeOrganizationIdHeader'>> & {
     abortController?: AbortController;
 };
 export declare const useApiRest: (config: IAptvisionApiRestConfig) => {
