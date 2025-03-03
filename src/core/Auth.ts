@@ -232,5 +232,6 @@ export const useAuth = (config: IAuthConfig) => {
     saveToken,
     verifyToken,
     logOut,
+    defaultLogOutHandler: defaultLogOut
   }
 }
