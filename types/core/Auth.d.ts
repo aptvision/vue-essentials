@@ -23,6 +23,7 @@ export interface IAuthConfig {
 export declare const useAuth: (config: IAuthConfig) => {
     exchangeCodeForToken: (queryString?: LocationQuery) => Promise<IAuthToken>;
     saveToken: (token: string) => void;
-    verifyToken: () => void;
+    verifyToken: () => Promise<void>;
     logOut: () => void;
+    defaultLogOutHandler: () => void;
 };

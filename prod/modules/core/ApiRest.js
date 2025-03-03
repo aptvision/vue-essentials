@@ -69,24 +69,39 @@ export const useApiRest = (config) => {
     const toUrlEncoded = (params) => {
         //@ts-expect-error type
         const encoder = new DataEncoder();
-        console.log(encoder.encode(params));
         return encoder.encode(params);
     };
-    const getAuthHeader = () => {
-        if (!config.token) {
+    const getHeaders = (configOverride = {}) => {
+        const conf = Object.assign({}, config, configOverride || {});
+        if (!conf.token) {
             throw new AuthorizationException('Failed restoring local token');
         }
-        return { Authorization: 'Bearer ' + config.token };
+        const headers = {
+            Authorization: 'Bearer ' + conf.token
+        };
+        if (conf.includeOrganizationIdHeader) {
+            if (!conf.organizationId) {
+                throw Error('Missing organizationId');
+            }
+            headers['x-organization-id'] = conf.organizationId;
+        }
+        return headers;
     };
     const handleResponse = (response, configOverride) => __awaiter(void 0, void 0, void 0, function* () {
         const conf = Object.assign({}, config, configOverride || {});
         if (response.status === 401) {
-            if (conf.unauthorizedHandler) {
-                conf.unauthorizedHandler();
+            if (conf.handlerUnauthorized) {
+                conf.handlerUnauthorized();
             }
             throw new AuthorizationException('401 - unauthorized');
         }
-        if (response.status !== 200) {
+        if (response.status === 403) {
+            if (conf.handlerForbidden) {
+                conf.handlerForbidden();
+            }
+            throw new AuthorizationException('403 - forbidden');
+        }
+        if (![200, 201].includes(response.status)) {
             throw new Error(response.statusText);
         }
         switch (conf.responseType) {
@@ -147,7 +162,7 @@ export const useApiRest = (config) => {
         fetch(url, {
             method: 'GET',
             signal: abortController.signal,
-            headers: getAuthHeader()
+            headers: getHeaders(configOverride)
         })
             .then(response => {
             resp = response;
@@ -170,7 +185,7 @@ export const useApiRest = (config) => {
             fetch(url, {
                 method: 'POST',
                 signal: abortController.signal,
-                headers: Object.assign({ 'Content-Type': ((_b = (_a = config.xhrOverride) === null || _a === void 0 ? void 0 : _a.post) === null || _b === void 0 ? void 0 : _b.contentType) || config.xhrDefaults.contentType }, getAuthHeader()),
+                headers: Object.assign({ 'Content-Type': ((_b = (_a = config.xhrOverride) === null || _a === void 0 ? void 0 : _a.post) === null || _b === void 0 ? void 0 : _b.contentType) || config.xhrDefaults.contentType }, getHeaders(configOverride)),
                 body: JSON.stringify(data)
             })
                 .then(response => {
@@ -198,7 +213,7 @@ export const useApiRest = (config) => {
             fetch(url, {
                 method: 'PUT',
                 signal: abortController.signal,
-                headers: Object.assign({ 'Content-Type': ((_b = (_a = config.xhrOverride) === null || _a === void 0 ? void 0 : _a.put) === null || _b === void 0 ? void 0 : _b.contentType) || config.xhrDefaults.contentType }, getAuthHeader()),
+                headers: Object.assign({ 'Content-Type': ((_b = (_a = config.xhrOverride) === null || _a === void 0 ? void 0 : _a.put) === null || _b === void 0 ? void 0 : _b.contentType) || config.xhrDefaults.contentType }, getHeaders(configOverride)),
                 body: JSON.stringify(data)
             })
                 .then(response => {
@@ -226,7 +241,7 @@ export const useApiRest = (config) => {
             fetch(url, {
                 method: 'PATCH',
                 signal: abortController.signal,
-                headers: Object.assign({ 'Content-Type': ((_b = (_a = config.xhrOverride) === null || _a === void 0 ? void 0 : _a.patch) === null || _b === void 0 ? void 0 : _b.contentType) || config.xhrDefaults.contentType }, getAuthHeader()),
+                headers: Object.assign({ 'Content-Type': ((_b = (_a = config.xhrOverride) === null || _a === void 0 ? void 0 : _a.patch) === null || _b === void 0 ? void 0 : _b.contentType) || config.xhrDefaults.contentType }, getHeaders(configOverride)),
                 body: JSON.stringify(data)
             })
                 .then(response => {
@@ -247,7 +262,7 @@ export const useApiRest = (config) => {
             fetch(url, {
                 method: 'DELETE',
                 signal: abortController.signal,
-                headers: getAuthHeader()
+                headers: getHeaders(configOverride)
             })
                 .then(response => {
                 resp = response;
@@ -277,7 +292,7 @@ export const useApiRest = (config) => {
                 let resp;
                 fetch(url, {
                     method: 'GET',
-                    headers: getAuthHeader(),
+                    headers: getHeaders(configOverride),
                     signal: abortController.signal
                 })
                     .then(response => {
