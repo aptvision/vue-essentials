@@ -191,5 +191,6 @@ export const useAuth = (config) => {
         saveToken,
         verifyToken,
         logOut,
+        defaultLogOutHandler: defaultLogOut
     };
 };
