@@ -95,15 +95,12 @@ export const useApiRest = (config) => {
             }
             throw new AuthorizationException('401 - unauthorized');
         }
-<<<<<<< HEAD
         if (response.status === 403) {
             if (conf.handlerForbidden) {
                 conf.handlerForbidden();
             }
             throw new AuthorizationException('403 - forbidden');
         }
-=======
->>>>>>> org-header
         if (![200, 201].includes(response.status)) {
             throw new Error(response.statusText);
         }
