@@ -11,6 +11,7 @@ export interface IAptvisionApiRestConfig {
     responseType: 'json' | 'blob';
     prefixRoutesWithApiVersion?: boolean;
     prefixRoutesWithOrganizationId?: boolean;
+    includeOrganizationIdHeader?: boolean;
     prefixRoutesWithUserId?: boolean;
     unauthorizedHandler?: () => void;
     errorHandler?: TErrorHandler;
@@ -31,7 +32,7 @@ export interface RestApiResponseInterface<T = any> {
     data: T;
     meta: ResponseMeta<any>;
 }
-export type TRestApiOptionsOverride = Partial<Pick<IAptvisionApiRestConfig, 'apiUrl' | 'responseType' | 'prefixRoutesWithUserId' | 'prefixRoutesWithApiVersion' | 'prefixRoutesWithOrganizationId'>> & {
+export type TRestApiOptionsOverride = Partial<Pick<IAptvisionApiRestConfig, 'apiUrl' | 'responseType' | 'prefixRoutesWithUserId' | 'prefixRoutesWithApiVersion' | 'prefixRoutesWithOrganizationId', | 'includeOrgationIdHeader'>> & {
     abortController?: AbortController;
 };
 export declare const useApiRest: (config: IAptvisionApiRestConfig) => {

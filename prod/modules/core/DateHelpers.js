@@ -10,6 +10,15 @@ export function useDateHelpers(config) {
     const formatTime = ((_d = config === null || config === void 0 ? void 0 : config.userDateFormat) === null || _d === void 0 ? void 0 : _d.time) || 'HH:mm';
     const formatDateISO = 'YYYY-MM-DD';
     const formatDateTimeISO = 'YYYY-MM-DDTHH:mm:ss';
+    const FORMAT_MAP = {
+        'YYYY': 'yyyy',
+        'YY': 'yy',
+        'MM': 'MM',
+        'DD': 'dd',
+        'HH': 'HH',
+        'mm': 'mm',
+        'ss': 'ss'
+    };
     const dayShortcuts = {
         pl: {
             poniedziałek: 'pon',
@@ -38,6 +47,9 @@ export function useDateHelpers(config) {
             szombat: 'szo',
             vasárnap: 'vas'
         }
+    };
+    const convertDateFormatQuasarToDateFns = (quasarFormat) => {
+        return quasarFormat.replace(/YYYY|YY|MM|DD|HH|mm|ss/g, match => FORMAT_MAP[match] || match);
     };
     const correctLocale = () => {
         const localeCode = (config === null || config === void 0 ? void 0 : config.localeCode) || 'en_GB.utf8';
@@ -88,8 +100,8 @@ export function useDateHelpers(config) {
     const isDifferenceInYears = (dateString1, dateString2) => {
         return differenceInYears(convertDate(dateString1), convertDate(dateString2));
     };
-    const subtractFromDate = (dateString = null, options) => {
-        return sub(dateString || new Date(), options);
+    const substractFromDate = (dateString, options) => {
+        return sub(dateString, options);
     };
     const getDayAndTime = (dateString, shortCutDay = false) => {
         const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
@@ -105,7 +117,7 @@ export function useDateHelpers(config) {
     };
     const useTimeAgo = (dateString = null, options) => {
         const currentDate = new Date();
-        const baseDate = sub(dateString || new Date(), options);
+        const baseDate = sub(dateString ? dateString : new Date(), options);
         return formatDistance(baseDate, currentDate, Object.assign({ addSuffix: true, locale: correctLocale().localeCode }, options));
     };
     const typeOptions = ref([
@@ -132,6 +144,9 @@ export function useDateHelpers(config) {
         }
         return false;
     };
+    const addToDate = (dateString, options) => {
+        return date.addToDate(dateString, options);
+    };
     return {
         format: {
             date: formatDate,
@@ -149,7 +164,7 @@ export function useDateHelpers(config) {
         humanDateTimeFromTimestamp,
         humanDateTimeSecFromTimestamp,
         currentYear,
-        subtractFromDate,
+        substractFromDate,
         operatorOptions,
         isValidDate,
         doesIncludeTime,
@@ -158,6 +173,9 @@ export function useDateHelpers(config) {
         currentDateSql,
         typeOptions,
         relativeDateOptions,
-        getDayAndTime
+        getDayAndTime,
+        correctLocale,
+        addToDate,
+        convertDateFormatQuasarToDateFns
     };
 }

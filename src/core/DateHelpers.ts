@@ -3,6 +3,7 @@ import { format, differenceInYears, fromUnixTime, sub, isValid, parseISO, isEqua
 import { date } from 'quasar'
 import { pl, hu, enGB } from 'date-fns/locale' // INFO: hardoced-locale-codes from date fns, you can add another in future
 import { IDateHelpersConfig } from '../interface/DateHelpersInterface'
+import { DateOptions } from 'quasar/dist/types/utils/date'
 
 export function useDateHelpers (config?:IDateHelpersConfig) {
   const formatDate = config?.userDateFormat?.date || 'YYYY/MM/DD'
@@ -12,6 +13,15 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
   const formatDateISO = 'YYYY-MM-DD'
   const formatDateTimeISO = 'YYYY-MM-DDTHH:mm:ss'
 
+  const FORMAT_MAP = <Record<string, string>>{
+    'YYYY': 'yyyy',
+    'YY': 'yy',
+    'MM': 'MM',
+    'DD': 'dd',
+    'HH': 'HH',
+    'mm': 'mm',
+    'ss': 'ss'
+  };
   const dayShortcuts: Record<string, Record<string, string>> = {
     pl: {
       poniedziałek: 'pon',
@@ -42,7 +52,9 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     }
   };
 
-
+  const convertDateFormatQuasarToDateFns = (quasarFormat:string) => {
+    return quasarFormat.replace(/YYYY|YY|MM|DD|HH|mm|ss/g, match => FORMAT_MAP[match] || match);
+  };
   const correctLocale = () => {
     const localeCode = config?.localeCode || 'en_GB.utf8'
     switch (localeCode) {
@@ -101,8 +113,8 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     return differenceInYears(convertDate(dateString1), convertDate(dateString2))
   }
 
-  const subtractFromDate = (dateString: string | Date | boolean | null = null, options: Record<string, number>) => {
-    return sub(dateString || new Date() as any, options)
+  const substractFromDate = (dateString: string | Date, options: DateOptions) => {
+    return sub(dateString, options)
   }
 
   const getDayAndTime = (dateString: string | Date, shortCutDay:boolean = false) => {
@@ -119,9 +131,9 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     return result
   }
 
-  const useTimeAgo = (dateString: string | Date | boolean | null = null, options: Record<string, any>) => {
+  const useTimeAgo = (dateString: string | Date | boolean | null = null, options: Record<string, unknown>) => {
     const currentDate = new Date()
-    const baseDate = sub(dateString || new Date() as any, options)
+    const baseDate = sub(dateString ? (dateString as string | Date) : new Date(), options)
     return formatDistance(
       baseDate,
       currentDate,
@@ -149,12 +161,16 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     return isValid(Date.parse(dateString))
   }
 
-  const doesIncludeTime = (dateString: any) => {
+  const doesIncludeTime = (dateString: string) => {
     const parsedDate: Date = parseISO(dateString)
     if (isValid(parsedDate)) {
       return !isEqual(parsedDate, startOfDay(parsedDate))
     }
     return false
+  }
+
+  const addToDate = (dateString: string | Date, options: DateOptions) => {
+    return date.addToDate(dateString, options)
   }
 
   return {
@@ -174,7 +190,7 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     humanDateTimeFromTimestamp,
     humanDateTimeSecFromTimestamp,
     currentYear,
-    subtractFromDate,
+    substractFromDate,
     operatorOptions,
     isValidDate,
     doesIncludeTime,
@@ -183,6 +199,9 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     currentDateSql,
     typeOptions,
     relativeDateOptions,
-    getDayAndTime
+    getDayAndTime,
+    correctLocale,
+    addToDate,
+    convertDateFormatQuasarToDateFns
   }
 }

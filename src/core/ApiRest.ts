@@ -17,6 +17,7 @@ export interface IAptvisionApiRestConfig {
   includeOrganizationIdHeader?: boolean
   handlerUnauthorized?: () => void;
   handlerForbidden?: () => void;
+  unauthorizedHandler?: () => void;
   errorHandler?: TErrorHandler;
   xhrDefaults: IxhrOption
   xhrOverride?: {
