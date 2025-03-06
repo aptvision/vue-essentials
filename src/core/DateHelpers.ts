@@ -92,6 +92,10 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     return date.formatDate(new Date(dateString), formatDateTime)
   }
 
+  const sqlDateTime = (dateString: string | Date) => {
+    return date.formatDate(new Date(dateString), formatDateTimeISO)
+  }
+
   const humanDateTimeSec = (dateString: string) => {
     return date.formatDate(new Date(dateString), formatDateTimeSec)
   }
@@ -202,6 +206,7 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     getDayAndTime,
     correctLocale,
     addToDate,
-    convertDateFormatQuasarToDateFns
+    convertDateFormatQuasarToDateFns,
+    sqlDateTime
   }
 }
