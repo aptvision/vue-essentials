@@ -82,6 +82,9 @@ export function useDateHelpers(config) {
     const humanDateTime = (dateString) => {
         return date.formatDate(new Date(dateString), formatDateTime);
     };
+    const sqlDateTime = (dateString) => {
+        return date.formatDate(new Date(dateString), formatDateTimeISO);
+    };
     const humanDateTimeSec = (dateString) => {
         return date.formatDate(new Date(dateString), formatDateTimeSec);
     };
@@ -176,6 +179,7 @@ export function useDateHelpers(config) {
         getDayAndTime,
         correctLocale,
         addToDate,
-        convertDateFormatQuasarToDateFns
+        convertDateFormatQuasarToDateFns,
+        sqlDateTime
     };
 }
