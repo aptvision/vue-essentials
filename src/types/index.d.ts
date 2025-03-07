@@ -8,6 +8,8 @@ import { useUnDo } from './core/UnDo'
 import { useNotify } from './quasar/Notify'
 import { useCommonHelpers } from './core/Common'
 import { useConfirmation } from './quasar/Confirmation'
+import { useAuth } from './core/Auth'
+
 export {
   useDateHelpers,
   useApiRest,
@@ -19,4 +21,5 @@ export {
   useNotify,
   useCommonHelpers,
   useConfirmation,
+  useAuth,
 }

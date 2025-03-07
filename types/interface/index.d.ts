@@ -1,6 +1,6 @@
 import { IDateHelpersConfig } from "./DateHelpersInterface";
 import { TRestApiOptionsOverride, ApiErrorInterface, RestApiResponseInterface, ResponseMeta } from '../core/ApiRest';
-import { IAuthToken } from '../types/core/Auth';
+import { IAuthToken } from '../core/Auth';
 type JsonObject<T = unknown> = {
     [key: string]: T | JsonObject<T> | TScalar | TScalar[];
 };

@@ -1,5 +1,12 @@
 import { JsonObject } from '../interface';
-import { IAuthToken, LocationQuery } from '../types/core/Auth';
+export interface IAuthToken {
+    token_type: string;
+    expires_in: number;
+    access_token: string;
+    refresh_token: string;
+}
+type LocationQueryValue = string | null;
+export type LocationQuery = Record<string, LocationQueryValue | LocationQueryValue[]>;
 export interface IAuth {
     exchangeCodeForToken: (queryString: {
         state: string;
@@ -27,3 +34,4 @@ export declare const useAuth: (config: IAuthConfig) => {
     logOut: () => void;
     defaultLogOutHandler: () => void;
 };
+export {};
