@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { format, differenceInYears, fromUnixTime, sub, isValid, parseISO, isEqual, startOfDay, formatDistance } from 'date-fns'
+import { format, differenceInYears, fromUnixTime, sub, isValid, parseISO, isEqual, startOfDay, formatDistance, parse } from 'date-fns'
 import { date } from 'quasar'
 import { pl, hu, enGB } from 'date-fns/locale' // INFO: hardoced-locale-codes from date fns, you can add another in future
 import { IDateHelpersConfig } from '../interface/DateHelpersInterface'
@@ -82,6 +82,11 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
 
   const time = (dateString: string) => {
     return date.formatDate(new Date(dateString), formatTime)
+  }
+
+  const parseTime = (timeString: string) => {
+    const parsedTime = parse(timeString, 'HH:mm:ss', new Date());
+    return format(parsedTime, formatTime)
   }
 
   const humanDate = (dateString: string) => {
@@ -207,6 +212,7 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     correctLocale,
     addToDate,
     convertDateFormatQuasarToDateFns,
-    sqlDateTime
+    sqlDateTime,
+    parseTime
   }
 }
