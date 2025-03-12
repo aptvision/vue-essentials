@@ -64,4 +64,5 @@ export declare function useDateHelpers(config?: IDateHelpersConfig): {
     addToDate: (dateString: string | Date, options: DateOptions) => Date;
     convertDateFormatQuasarToDateFns: (quasarFormat: string) => string;
     sqlDateTime: (dateString: string | Date) => string;
+    parseTime: (timeString: string) => string;
 };
