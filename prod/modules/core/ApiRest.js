@@ -1,12 +1,3 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 export class AuthorizationException extends Error {
 }
 const pollTimeouts = {};
@@ -87,7 +78,7 @@ export const useApiRest = (config) => {
         }
         return headers;
     };
-    const handleResponse = (response, configOverride) => __awaiter(void 0, void 0, void 0, function* () {
+    const handleResponse = (response, configOverride) => {
         const conf = Object.assign({}, config, configOverride || {});
         if (response.status === 401) {
             if (conf.handlerUnauthorized) {
@@ -104,20 +95,14 @@ export const useApiRest = (config) => {
         if (![200, 201].includes(response.status)) {
             throw new Error(response.statusText);
         }
-        switch (conf.responseType) {
-            // case 'blob':
-            //   return response.blob()
-            case 'json': {
-                const json = response.json();
-                if (typeof json !== 'object' || json === null) {
-                    throw new Error('Response is not json object');
-                }
-                return json;
-            }
-            default:
-                throw new Error('Invalid response type config');
+    };
+    const responseToJson = (response) => {
+        const json = response.json();
+        if (typeof json !== 'object' || json === null) {
+            throw new Error('Response is not json object');
         }
-    });
+        return json;
+    };
     const getUrl = (endpoint, configOverride) => {
         const conf = Object.assign({}, config, configOverride || {});
         let apiUrlCopy = apiUrl;
@@ -166,7 +151,33 @@ export const useApiRest = (config) => {
         })
             .then(response => {
             resp = response;
-            return handleResponse(response, configOverride);
+            handleResponse(response, configOverride);
+            return responseToJson(response);
+        })
+            .then(result => resolve(result))
+            .catch((error) => {
+            reject(config.errorHandler ? config.errorHandler(error, resp) : error);
+        });
+    });
+    const download = (endpoint, params, configOverride) => new Promise((resolve, reject) => {
+        let url = getUrl(endpoint, configOverride);
+        if (params && typeof params === 'object') {
+            const paramsEncoded = toUrlEncoded(params);
+            if (paramsEncoded) {
+                url += `?${paramsEncoded}`;
+            }
+        }
+        const abortController = (configOverride === null || configOverride === void 0 ? void 0 : configOverride.abortController) || new AbortController();
+        let resp;
+        fetch(url, {
+            method: 'GET',
+            signal: abortController.signal,
+            headers: getHeaders(configOverride)
+        })
+            .then(response => {
+            resp = response;
+            handleResponse(response, configOverride);
+            return response.blob();
         })
             .then(result => resolve(result))
             .catch((error) => {
@@ -190,7 +201,8 @@ export const useApiRest = (config) => {
             })
                 .then(response => {
                 resp = response;
-                return handleResponse(response, configOverride);
+                handleResponse(response, configOverride);
+                return responseToJson(response);
             })
                 .then(result => resolve(result))
                 .catch((error) => {
@@ -218,7 +230,8 @@ export const useApiRest = (config) => {
             })
                 .then(response => {
                 resp = response;
-                return handleResponse(response, configOverride);
+                handleResponse(response, configOverride);
+                return responseToJson(response);
             })
                 .then(result => resolve(result))
                 .catch((error) => {
@@ -246,7 +259,8 @@ export const useApiRest = (config) => {
             })
                 .then(response => {
                 resp = response;
-                return handleResponse(response, configOverride);
+                handleResponse(response, configOverride);
+                return responseToJson(response);
             })
                 .then(result => resolve(result))
                 .catch((error) => {
@@ -266,7 +280,8 @@ export const useApiRest = (config) => {
             })
                 .then(response => {
                 resp = response;
-                return handleResponse(response, configOverride);
+                handleResponse(response, configOverride);
+                return responseToJson(response);
             })
                 .then(result => resolve(result))
                 .catch((error) => {
@@ -297,7 +312,8 @@ export const useApiRest = (config) => {
                 })
                     .then(response => {
                     resp = response;
-                    return handleResponse(response, configOverride);
+                    handleResponse(response, configOverride);
+                    return responseToJson(response);
                 })
                     .then(result => resolve(result))
                     .catch((error) => {
@@ -323,6 +339,7 @@ export const useApiRest = (config) => {
         patch,
         remove,
         poll,
-        pollCancel
+        pollCancel,
+        download
     };
 };
