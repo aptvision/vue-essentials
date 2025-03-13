@@ -56,4 +56,5 @@ export declare const useApiRest: (config: IAptvisionApiRestConfig) => {
     remove: (endpoint: string, configOverride: TRestApiOptionsOverride) => Promise<JsonObject>;
     poll: (endpoint: string, params: JsonObject, intervalSec: number, configOverride: TRestApiOptionsOverride) => void;
     pollCancel: (endpoint: string) => void;
+    download: (endpoint: string, params?: JsonObject, configOverride?: TRestApiOptionsOverride) => Promise<Blob>;
 };
