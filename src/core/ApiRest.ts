@@ -128,7 +128,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
     }
     return headers
   }
-  const handleResponse = async (response: Response, configOverride?: TRestApiOptionsOverride): Promise<JsonObject> => {
+  const handleResponse = (response: Response, configOverride?: TRestApiOptionsOverride): void => {
     const conf = Object.assign({}, config, configOverride || {})
     if (response.status === 401) {
       if (conf.handlerUnauthorized) {
@@ -145,19 +145,13 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
     if (![200, 201].includes(response.status)) {
       throw new Error(response.statusText)
     }
-    switch (conf.responseType) {
-      // case 'blob':
-      //   return response.blob()
-      case 'json': {
-        const json: unknown = response.json()
-        if (typeof json !== 'object' || json === null) {
-          throw new Error('Response is not json object')
-        }
-        return json as JsonObject
-      }
-      default:
-        throw new Error('Invalid response type config')
+  }
+  const responseToJson = (response: Response):JsonObject => {
+    const json: unknown = response.json()
+    if (typeof json !== 'object' || json === null) {
+      throw new Error('Response is not json object')
     }
+    return json as JsonObject
   }
   const getUrl = (endpoint: string, configOverride?: TRestApiOptionsOverride) => {
     const conf = Object.assign({}, config, configOverride || {})
@@ -213,7 +207,37 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
     })
       .then(response => {
         resp = response
-        return handleResponse(response, configOverride)
+        handleResponse(response, configOverride)
+        return responseToJson(response)
+      })
+      .then(result => resolve(result))
+      .catch((error: Error) => {
+        reject(config.errorHandler ? config.errorHandler(error, resp) : error)
+      })
+  })
+  const download = (
+    endpoint: string,
+    params?: JsonObject,
+    configOverride?: TRestApiOptionsOverride
+  ): Promise<Blob> => new Promise((resolve, reject) => {
+    let url = getUrl(endpoint, configOverride)
+    if (params && typeof params === 'object') {
+      const paramsEncoded = toUrlEncoded(params)
+      if (paramsEncoded) {
+        url += `?${paramsEncoded}`
+      }
+    }
+    const abortController = configOverride?.abortController || new AbortController()
+    let resp: Response|undefined
+    fetch(url, {
+      method: 'GET',
+      signal: abortController.signal,
+      headers: getHeaders(configOverride)
+    })
+      .then(response => {
+        resp = response
+        handleResponse(response, configOverride)
+        return response.blob()
       })
       .then(result => resolve(result))
       .catch((error: Error) => {
@@ -236,7 +260,8 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
       })
         .then(response => {
           resp = response
-          return handleResponse(response, configOverride)
+          handleResponse(response, configOverride)
+          return responseToJson(response)
         })
         .then(result => resolve(result as unknown as RestApiResponseInterface))
         .catch((error: Error) => {
@@ -263,7 +288,8 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
       })
         .then(response => {
           resp = response
-          return handleResponse(response, configOverride)
+          handleResponse(response, configOverride)
+          return responseToJson(response)
         })
         .then(result => resolve(result as unknown as JsonObject))
         .catch((error: Error) => {
@@ -291,7 +317,8 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
       })
         .then(response => {
           resp = response
-          return handleResponse(response, configOverride)
+          handleResponse(response, configOverride)
+          return responseToJson(response)
         })
         .then(result => resolve(result as unknown as JsonObject))
         .catch((error: Error) => {
@@ -311,7 +338,8 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
       })
         .then(response => {
           resp = response
-          return handleResponse(response, configOverride)
+          handleResponse(response, configOverride)
+          return responseToJson(response)
         })
         .then(result => resolve(result as unknown as JsonObject))
         .catch((error: Error) => {
@@ -342,7 +370,8 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
         })
           .then(response => {
             resp = response
-            return handleResponse(response, configOverride)
+            handleResponse(response, configOverride)
+            return responseToJson(response)
           })
           .then(result => resolve(result))
           .catch((error: Error) => {
@@ -368,6 +397,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
     patch,
     remove,
     poll,
-    pollCancel
+    pollCancel,
+    download
   }
 }
