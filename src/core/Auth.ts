@@ -97,9 +97,11 @@ export const useAuth = (config: IAuthConfig) => {
         headers: new Headers(getAuthHeader())
       })
         .then(() => {
+          removeToken()
           redirectToAuth()
         })
         .catch(() => {
+          removeToken()
           redirectToAuth()
         })
     } else {
@@ -107,7 +109,6 @@ export const useAuth = (config: IAuthConfig) => {
     }
   }
   const logOut = () => {
-    removeToken()
     if (config.logOut) {
       config.logOut(defaultLogOut)
       return
@@ -236,11 +237,16 @@ export const useAuth = (config: IAuthConfig) => {
     })
   }
 
+  const getToken = (): string | null => {
+    return localStorage.getItem(config.authTokenName)
+  }
+
   return {
     exchangeCodeForToken,
     saveToken,
     verifyToken,
     logOut,
-    defaultLogOutHandler: defaultLogOut
+    defaultLogOutHandler: defaultLogOut,
+    getToken,
   }
 }

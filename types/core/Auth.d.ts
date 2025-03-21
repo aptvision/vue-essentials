@@ -33,5 +33,6 @@ export declare const useAuth: (config: IAuthConfig) => {
     verifyToken: () => Promise<void>;
     logOut: () => void;
     defaultLogOutHandler: () => void;
+    getToken: () => string | null;
 };
 export {};

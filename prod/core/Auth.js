@@ -57,9 +57,11 @@ export const useAuth = (config) => {
                 headers: new Headers(getAuthHeader())
             })
                 .then(() => {
+                removeToken();
                 redirectToAuth();
             })
                 .catch(() => {
+                removeToken();
                 redirectToAuth();
             });
         }
@@ -68,7 +70,6 @@ export const useAuth = (config) => {
         }
     };
     const logOut = () => {
-        removeToken();
         if (config.logOut) {
             config.logOut(defaultLogOut);
             return;
@@ -185,11 +186,15 @@ export const useAuth = (config) => {
             });
         });
     };
+    const getToken = () => {
+        return localStorage.getItem(config.authTokenName);
+    };
     return {
         exchangeCodeForToken,
         saveToken,
         verifyToken,
         logOut,
-        defaultLogOutHandler: defaultLogOut
+        defaultLogOutHandler: defaultLogOut,
+        getToken,
     };
 };
