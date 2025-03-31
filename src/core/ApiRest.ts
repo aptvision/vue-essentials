@@ -306,7 +306,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
       if (typeof data !== 'object') {
         data = {}
       }
-      if (typeof id !== 'undefined') {
+      if (id) {
         url += '/' + id
       }
       fetch(url, {
