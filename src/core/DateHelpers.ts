@@ -4,7 +4,6 @@ import { pl, hu, enGB } from 'date-fns/locale' // INFO: hardoced-locale-codes fr
 import { IDateHelpersConfig } from '../interface/DateHelpersInterface'
 
 export function useDateHelpers (config?:IDateHelpersConfig) {
-  // Opcje dla natywnego Date.toLocaleDateString/toLocaleTimeString
   const dateOptions: Intl.DateTimeFormatOptions = { 
     day: '2-digit', 
     month: '2-digit', 
@@ -36,31 +35,24 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     hour12: false
   }
   
-  // Generujemy formaty na podstawie natywnych opcji formatowania
   const generateFormatFromOptions = (options: Intl.DateTimeFormatOptions): string => {
     let format = '';
     
-    // Rok
     if (options.year === 'numeric') format += 'YYYY';
     else if (options.year === '2-digit') format += 'YY';
     
-    // Miesiąc
     if (options.month === '2-digit') format += '/MM';
     else if (options.month === 'numeric') format += '/M';
     
-    // Dzień
     if (options.day === '2-digit') format += '/DD';
     else if (options.day === 'numeric') format += '/D';
     
-    // Godzina
     if (options.hour === '2-digit') format += ' HH';
     else if (options.hour === 'numeric') format += ' H';
     
-    // Minuta
     if (options.minute === '2-digit') format += ':mm';
     else if (options.minute === 'numeric') format += ':m';
     
-    // Sekunda
     if (options.second === '2-digit') format += ':ss';
     else if (options.second === 'numeric') format += ':s';
     
