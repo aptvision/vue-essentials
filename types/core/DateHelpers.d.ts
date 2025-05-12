@@ -1,5 +1,4 @@
 import { IDateHelpersConfig } from '../interface/DateHelpersInterface';
-import { DateOptions } from 'quasar/dist/types/utils/date';
 export declare function useDateHelpers(config?: IDateHelpersConfig): {
     format: {
         date: string;
@@ -17,7 +16,7 @@ export declare function useDateHelpers(config?: IDateHelpersConfig): {
     humanDateTimeFromTimestamp: (dateString: number) => string;
     humanDateTimeSecFromTimestamp: (dateString: number) => string;
     currentYear: () => string;
-    substractFromDate: (dateString: string | Date, options: DateOptions) => Date;
+    substractFromDate: (dateString: string | Date, options: Record<string, number>) => Date;
     operatorOptions: import("vue").Ref<{
         value: string;
         label: string;
@@ -61,7 +60,7 @@ export declare function useDateHelpers(config?: IDateHelpersConfig): {
         localeCode: import("date-fns").Locale;
         lang: string;
     };
-    addToDate: (dateString: string | Date, options: DateOptions) => Date;
+    addToDate: (dateString: string | Date, options: Record<string, number>) => Date;
     convertDateFormatQuasarToDateFns: (quasarFormat: string) => string;
     sqlDateTime: (dateString: string | Date) => string;
     parseTime: (timeString: string) => string;

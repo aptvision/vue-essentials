@@ -1,14 +1,42 @@
 import { ref } from 'vue';
-import { format, differenceInYears, fromUnixTime, sub, isValid, parseISO, isEqual, startOfDay, formatDistance, parse } from 'date-fns';
-import { date } from 'quasar';
+import { format, differenceInYears, fromUnixTime, sub, isValid, parseISO, isEqual, startOfDay, formatDistance, parse, add } from 'date-fns';
 import { pl, hu, enGB } from 'date-fns/locale'; // INFO: hardoced-locale-codes from date fns, you can add another in future
 export function useDateHelpers(config) {
+    // Zachowujemy oryginalne formaty dla kompatybilności
     const formatDate = config?.userDateFormat?.date || 'YYYY/MM/DD';
     const formatDateTime = config?.userDateFormat?.dateTime || 'YYYY/MM/DD HH:mm';
     const formatDateTimeSec = config?.userDateFormat?.dateTimeSec || 'YYYY/MM/DD HH:mm:ss';
     const formatTime = config?.userDateFormat?.time || 'HH:mm';
     const formatDateISO = 'YYYY-MM-DD';
     const formatDateTimeISO = 'YYYY-MM-DDTHH:mm:ss';
+    // Opcje dla natywnego Date.toLocaleDateString/toLocaleTimeString
+    const dateOptions = {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    };
+    const dateTimeOptions = {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    };
+    const dateTimeSecOptions = {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    };
+    const timeOptions = {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    };
     const FORMAT_MAP = {
         'YYYY': 'yyyy',
         'YY': 'yy',
@@ -63,45 +91,59 @@ export function useDateHelpers(config) {
                 return { localeCode: enGB, lang: 'enGB' };
         }
     };
+    const parseDateWithoutTimezone = (dateString) => {
+        if (typeof dateString === 'string' && dateString.includes('T')) {
+            const [datePart, timePart] = dateString.split('T');
+            const timeOnly = timePart.split(':').slice(0, 2).join(':');
+            const newDateString = `${datePart} ${timeOnly}`;
+            return parse(newDateString, 'yyyy-MM-dd HH:mm', new Date());
+        }
+        return new Date(dateString);
+    };
     const convertDate = (date) => {
-        return new Date(date);
+        return parseDateWithoutTimezone(date);
     };
     const currentDateSql = () => {
-        return date.formatDate(new Date(), formatDateISO);
+        const now = new Date();
+        return now.toISOString().split('T')[0];
     };
     const currentYear = () => {
         return format(new Date(), 'yyyy');
     };
     const time = (dateString) => {
-        return date.formatDate(new Date(dateString), formatTime);
+        const date = new Date(dateString);
+        return date.toLocaleTimeString(correctLocale().lang, timeOptions);
     };
     const parseTime = (timeString) => {
         const parsedTime = parse(timeString, 'HH:mm:ss', new Date());
-        return format(parsedTime, formatTime);
+        return parsedTime.toLocaleTimeString(correctLocale().lang, timeOptions);
     };
     const humanDate = (dateString) => {
-        return date.formatDate(new Date(dateString), formatDate);
+        const date = new Date(dateString);
+        return date.toLocaleDateString(correctLocale().lang, dateOptions);
     };
     const humanDateTime = (dateString) => {
-        return date.formatDate(new Date(dateString), formatDateTime);
+        const date = new Date(dateString);
+        return date.toLocaleDateString(correctLocale().lang, dateTimeOptions);
     };
     const sqlDateTime = (dateString) => {
-        return date.formatDate(new Date(dateString), formatDateTimeISO);
+        return new Date(dateString).toISOString();
     };
     const humanDateTimeSec = (dateString) => {
-        return date.formatDate(new Date(dateString), formatDateTimeSec);
+        const date = new Date(dateString);
+        return date.toLocaleDateString(correctLocale().lang, dateTimeSecOptions);
     };
     const humanDateFromTimestamp = (dateString) => {
         const result = fromUnixTime(dateString / 1000);
-        return date.formatDate(result, formatDate);
+        return result.toLocaleDateString(correctLocale().lang, dateOptions);
     };
     const humanDateTimeFromTimestamp = (dateString) => {
         const result = fromUnixTime(dateString / 1000);
-        return date.formatDate(result, formatDateTime);
+        return result.toLocaleDateString(correctLocale().lang, dateTimeOptions);
     };
     const humanDateTimeSecFromTimestamp = (dateString) => {
         const result = fromUnixTime(dateString / 1000);
-        return format(result, formatDateTimeSec);
+        return result.toLocaleDateString(correctLocale().lang, dateTimeSecOptions);
     };
     const isDifferenceInYears = (dateString1, dateString2) => {
         return differenceInYears(convertDate(dateString1), convertDate(dateString2));
@@ -110,11 +152,11 @@ export function useDateHelpers(config) {
         return sub(dateString, options);
     };
     const getDayAndTime = (dateString, shortCutDay = false) => {
-        const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
+        const date = parseDateWithoutTimezone(dateString);
         const localize = correctLocale();
         const result = {
             day: format(date, "EEEE", { locale: localize.localeCode }),
-            time: format(date, "HH:mm")
+            time: format(date, "HH:mm", { locale: localize.localeCode })
         };
         if (shortCutDay) {
             result.day = dayShortcuts[localize.lang][result.day];
@@ -151,7 +193,7 @@ export function useDateHelpers(config) {
         return false;
     };
     const addToDate = (dateString, options) => {
-        return date.addToDate(dateString, options);
+        return add(new Date(dateString), options);
     };
     return {
         format: {
