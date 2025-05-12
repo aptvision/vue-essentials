@@ -1,17 +1,48 @@
 import { ref } from 'vue'
-import { format, differenceInYears, fromUnixTime, sub, isValid, parseISO, isEqual, startOfDay, formatDistance, parse } from 'date-fns'
-import { date } from 'quasar'
+import { format, differenceInYears, fromUnixTime, sub, isValid, parseISO, isEqual, startOfDay, formatDistance, parse, add } from 'date-fns'
 import { pl, hu, enGB } from 'date-fns/locale' // INFO: hardoced-locale-codes from date fns, you can add another in future
 import { IDateHelpersConfig } from '../interface/DateHelpersInterface'
-import { DateOptions } from 'quasar/dist/types/utils/date'
 
 export function useDateHelpers (config?:IDateHelpersConfig) {
+  // Zachowujemy oryginalne formaty dla kompatybilności
   const formatDate = config?.userDateFormat?.date || 'YYYY/MM/DD'
   const formatDateTime = config?.userDateFormat?.dateTime || 'YYYY/MM/DD HH:mm'
   const formatDateTimeSec = config?.userDateFormat?.dateTimeSec || 'YYYY/MM/DD HH:mm:ss'
   const formatTime = config?.userDateFormat?.time || 'HH:mm'
   const formatDateISO = 'YYYY-MM-DD'
   const formatDateTimeISO = 'YYYY-MM-DDTHH:mm:ss'
+  
+  // Opcje dla natywnego Date.toLocaleDateString/toLocaleTimeString
+  const dateOptions: Intl.DateTimeFormatOptions = { 
+    day: '2-digit', 
+    month: '2-digit', 
+    year: 'numeric' 
+  }
+  
+  const dateTimeOptions: Intl.DateTimeFormatOptions = { 
+    day: '2-digit', 
+    month: '2-digit', 
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }
+  
+  const dateTimeSecOptions: Intl.DateTimeFormatOptions = { 
+    day: '2-digit', 
+    month: '2-digit', 
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  }
+  
+  const timeOptions: Intl.DateTimeFormatOptions = { 
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }
 
   const FORMAT_MAP = <Record<string, string>>{
     'YYYY': 'yyyy',
@@ -68,12 +99,24 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
         return {localeCode:enGB,lang:'enGB'}
     }
   }
+  const parseDateWithoutTimezone = (dateString: string | Date): Date => {
+    if (typeof dateString === 'string' && dateString.includes('T')) {
+      const [datePart, timePart] = dateString.split('T');
+      const timeOnly = timePart.split(':').slice(0, 2).join(':');
+      const newDateString = `${datePart} ${timeOnly}`;
+      
+      return parse(newDateString, 'yyyy-MM-dd HH:mm', new Date());
+    }
+    return new Date(dateString);
+  }
+  
   const convertDate = (date: string | Date) => {
-    return new Date(date)
+    return parseDateWithoutTimezone(date);
   }
 
   const currentDateSql = () => {
-    return date.formatDate(new Date(), formatDateISO)
+    const now = new Date()
+    return now.toISOString().split('T')[0]
   }
 
   const currentYear = () => {
@@ -81,63 +124,70 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
   }
 
   const time = (dateString: string) => {
-    return date.formatDate(new Date(dateString), formatTime)
+    const date = new Date(dateString)
+    return date.toLocaleTimeString(correctLocale().lang, timeOptions)
   }
 
   const parseTime = (timeString: string) => {
     const parsedTime = parse(timeString, 'HH:mm:ss', new Date());
-    return format(parsedTime, formatTime)
+    return parsedTime.toLocaleTimeString(correctLocale().lang, timeOptions)
   }
 
   const humanDate = (dateString: string) => {
-    return date.formatDate(new Date(dateString), formatDate)
+    const date = new Date(dateString)
+    return date.toLocaleDateString(correctLocale().lang, dateOptions)
   }
 
   const humanDateTime = (dateString: string | Date) => {
-    return date.formatDate(new Date(dateString), formatDateTime)
+    const date = new Date(dateString)
+    return date.toLocaleDateString(correctLocale().lang, dateTimeOptions)
   }
 
   const sqlDateTime = (dateString: string | Date) => {
-    return date.formatDate(new Date(dateString), formatDateTimeISO)
+    return new Date(dateString).toISOString()
   }
 
   const humanDateTimeSec = (dateString: string) => {
-    return date.formatDate(new Date(dateString), formatDateTimeSec)
+    const date = new Date(dateString)
+    return date.toLocaleDateString(correctLocale().lang, dateTimeSecOptions)
   }
 
   const humanDateFromTimestamp = (dateString: number) => {
     const result = fromUnixTime(dateString / 1000)
-    return date.formatDate(result, formatDate)
+    return result.toLocaleDateString(correctLocale().lang, dateOptions)
   }
   const humanDateTimeFromTimestamp = (dateString: number) => {
     const result = fromUnixTime(dateString / 1000)
-    return date.formatDate(result, formatDateTime)
+    return result.toLocaleDateString(correctLocale().lang, dateTimeOptions)
   }
   const humanDateTimeSecFromTimestamp = (dateString: number) => {
     const result = fromUnixTime(dateString / 1000)
-    return format(result, formatDateTimeSec)
+    return result.toLocaleDateString(correctLocale().lang, dateTimeSecOptions)
   }
 
   const isDifferenceInYears = (dateString1: string | Date, dateString2: string | Date) => {
     return differenceInYears(convertDate(dateString1), convertDate(dateString2))
   }
 
-  const substractFromDate = (dateString: string | Date, options: DateOptions) => {
+  const substractFromDate = (dateString: string | Date, options: Record<string, number>) => {
     return sub(dateString, options)
   }
 
   const getDayAndTime = (dateString: string | Date, shortCutDay:boolean = false) => {
-    const date = typeof dateString === 'string' ? new Date(dateString) : dateString
-  
-    const localize = correctLocale()
+    const date = parseDateWithoutTimezone(dateString);
+    
+    const localize = correctLocale();
+    
     const result = {
-      day:format(date, "EEEE", {locale: localize.localeCode}),
-      time: format(date, "HH:mm")
+      day: format(date, "EEEE", {locale: localize.localeCode}),
+      time: format(date, "HH:mm", {locale: localize.localeCode})
+    };
+    
+    if (shortCutDay) {
+      result.day = dayShortcuts[localize.lang as keyof typeof dayShortcuts][result.day];
     }
-    if(shortCutDay) {
-      result.day = dayShortcuts[localize.lang as keyof typeof dayShortcuts][result.day]
-    }
-    return result
+    
+    return result;
   }
 
   const useTimeAgo = (dateString: string | Date | boolean | null = null, options: Record<string, unknown>) => {
@@ -178,8 +228,8 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     return false
   }
 
-  const addToDate = (dateString: string | Date, options: DateOptions) => {
-    return date.addToDate(dateString, options)
+  const addToDate = (dateString: string | Date, options: Record<string, number>) => {
+    return add(new Date(dateString), options)
   }
 
   return {
