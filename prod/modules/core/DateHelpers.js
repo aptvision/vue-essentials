@@ -3,7 +3,6 @@ import { format, differenceInYears, fromUnixTime, sub, isValid, parseISO, isEqua
 import { pl, hu, enGB } from 'date-fns/locale'; // INFO: hardoced-locale-codes from date fns, you can add another in future
 export function useDateHelpers(config) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
-    // Opcje dla natywnego Date.toLocaleDateString/toLocaleTimeString
     const dateOptions = {
         day: '2-digit',
         month: '2-digit',
@@ -31,35 +30,28 @@ export function useDateHelpers(config) {
         minute: '2-digit',
         hour12: false
     };
-    // Generujemy formaty na podstawie natywnych opcji formatowania
     const generateFormatFromOptions = (options) => {
         let format = '';
-        // Rok
         if (options.year === 'numeric')
             format += 'YYYY';
         else if (options.year === '2-digit')
             format += 'YY';
-        // Miesiąc
         if (options.month === '2-digit')
             format += '/MM';
         else if (options.month === 'numeric')
             format += '/M';
-        // Dzień
         if (options.day === '2-digit')
             format += '/DD';
         else if (options.day === 'numeric')
             format += '/D';
-        // Godzina
         if (options.hour === '2-digit')
             format += ' HH';
         else if (options.hour === 'numeric')
             format += ' H';
-        // Minuta
         if (options.minute === '2-digit')
             format += ':mm';
         else if (options.minute === 'numeric')
             format += ':m';
-        // Sekunda
         if (options.second === '2-digit')
             format += ':ss';
         else if (options.second === 'numeric')
