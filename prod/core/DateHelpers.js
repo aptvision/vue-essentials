@@ -2,13 +2,6 @@ import { ref } from 'vue';
 import { format, differenceInYears, fromUnixTime, sub, isValid, parseISO, isEqual, startOfDay, formatDistance, parse, add } from 'date-fns';
 import { pl, hu, enGB } from 'date-fns/locale'; // INFO: hardoced-locale-codes from date fns, you can add another in future
 export function useDateHelpers(config) {
-    // Zachowujemy oryginalne formaty dla kompatybilności
-    const formatDate = config?.userDateFormat?.date || 'YYYY/MM/DD';
-    const formatDateTime = config?.userDateFormat?.dateTime || 'YYYY/MM/DD HH:mm';
-    const formatDateTimeSec = config?.userDateFormat?.dateTimeSec || 'YYYY/MM/DD HH:mm:ss';
-    const formatTime = config?.userDateFormat?.time || 'HH:mm';
-    const formatDateISO = 'YYYY-MM-DD';
-    const formatDateTimeISO = 'YYYY-MM-DDTHH:mm:ss';
     // Opcje dla natywnego Date.toLocaleDateString/toLocaleTimeString
     const dateOptions = {
         day: '2-digit',
@@ -37,6 +30,47 @@ export function useDateHelpers(config) {
         minute: '2-digit',
         hour12: false
     };
+    // Generujemy formaty na podstawie natywnych opcji formatowania
+    const generateFormatFromOptions = (options) => {
+        let format = '';
+        // Rok
+        if (options.year === 'numeric')
+            format += 'YYYY';
+        else if (options.year === '2-digit')
+            format += 'YY';
+        // Miesiąc
+        if (options.month === '2-digit')
+            format += '/MM';
+        else if (options.month === 'numeric')
+            format += '/M';
+        // Dzień
+        if (options.day === '2-digit')
+            format += '/DD';
+        else if (options.day === 'numeric')
+            format += '/D';
+        // Godzina
+        if (options.hour === '2-digit')
+            format += ' HH';
+        else if (options.hour === 'numeric')
+            format += ' H';
+        // Minuta
+        if (options.minute === '2-digit')
+            format += ':mm';
+        else if (options.minute === 'numeric')
+            format += ':m';
+        // Sekunda
+        if (options.second === '2-digit')
+            format += ':ss';
+        else if (options.second === 'numeric')
+            format += ':s';
+        return format.trim();
+    };
+    const formatDate = config?.userDateFormat?.date || generateFormatFromOptions(dateOptions);
+    const formatDateTime = config?.userDateFormat?.dateTime || generateFormatFromOptions(dateTimeOptions);
+    const formatDateTimeSec = config?.userDateFormat?.dateTimeSec || generateFormatFromOptions(dateTimeSecOptions);
+    const formatTime = config?.userDateFormat?.time || generateFormatFromOptions(timeOptions);
+    const formatDateISO = 'YYYY-MM-DD';
+    const formatDateTimeISO = 'YYYY-MM-DDTHH:mm:ss';
     const FORMAT_MAP = {
         'YYYY': 'yyyy',
         'YY': 'yy',
@@ -56,7 +90,7 @@ export function useDateHelpers(config) {
             sobota: 'sob',
             niedziela: 'nd'
         },
-        enGB: {
+        en: {
             Monday: 'Mon',
             Tuesday: 'Tue',
             Wednesday: 'Wed',
@@ -86,9 +120,9 @@ export function useDateHelpers(config) {
             case 'hu_HU.utf8':
                 return { localeCode: hu, lang: 'hu' };
             case 'en_GB.utf8':
-                return { localeCode: enGB, lang: 'enGB' };
+                return { localeCode: enGB, lang: 'en' };
             default:
-                return { localeCode: enGB, lang: 'enGB' };
+                return { localeCode: enGB, lang: 'en' };
         }
     };
     const parseDateWithoutTimezone = (dateString) => {
