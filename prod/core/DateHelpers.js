@@ -287,8 +287,8 @@ export function useDateHelpers(config) {
     const addToDate = (dateString, options) => {
         return add(new Date(dateString), options);
     };
-    return {
-        format: {
+    const exportedFormat = () => {
+        return {
             js: {
                 date: formatDate,
                 dateTime: formatDateTime,
@@ -303,7 +303,10 @@ export function useDateHelpers(config) {
             },
             dateISO: formatDateISO,
             dateTimeISO: formatDateTimeISO
-        },
+        };
+    };
+    return {
+        format: exportedFormat(),
         humanDate,
         humanDateTime,
         humanDateTimeSec,
