@@ -9,4 +9,10 @@ export interface IDateHelpersConfig {
     $_t?: (key: string) => string;
     userDateFormat?: IUserDateFormat;
 }
+export interface IExportedDateFormat {
+    js: IUserDateFormat;
+    quasar: IUserDateFormat;
+    dateISO: string;
+    dateTimeISO: string;
+}
 export {};

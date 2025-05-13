@@ -1,13 +1,6 @@
-import { IDateHelpersConfig } from '../interface/DateHelpersInterface';
+import { IDateHelpersConfig, IExportedDateFormat } from '../interface/DateHelpersInterface';
 export declare function useDateHelpers(config?: IDateHelpersConfig): {
-    format: {
-        date: string;
-        dateTime: string;
-        dateTimeSec: string;
-        time: string;
-        dateISO: string;
-        dateTimeISO: string;
-    };
+    format: IExportedDateFormat;
     humanDate: (dateString: string) => string;
     humanDateTime: (dateString: string | Date) => string;
     humanDateTimeSec: (dateString: string) => string;
@@ -62,6 +55,7 @@ export declare function useDateHelpers(config?: IDateHelpersConfig): {
     };
     addToDate: (dateString: string | Date, options: Record<string, number>) => Date;
     convertDateFormatQuasarToDateFns: (quasarFormat: string) => string;
+    convertDateFormatDateFnsToQuasar: (dateFnsFormat: string) => string;
     sqlDateTime: (dateString: string | Date) => string;
     parseTime: (timeString: string) => string;
 };
