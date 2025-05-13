@@ -36,12 +36,15 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
   }
 
   const convertLocalCode = () => {
-    if (!config?.localeCode) {
-      throw new Error('Missing locale code')
+    const localeCode = config?.localeCode;
+    if (!localeCode) {
+      throw new Error('Missing locale code');
     }
-    return config?.localeCode
-    .replace(/\..*$/, '')
-    .replace(/_/g, '-');
+    const dotPos = localeCode.indexOf('.');
+    const base = dotPos === -1
+      ? localeCode
+      : localeCode.substring(0, dotPos);
+    return base.replaceAll('_', '-');
   }
   
   const getDatePattern = () =>{
