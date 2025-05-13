@@ -1,9 +1,10 @@
 import { ref } from 'vue'
 import { format, differenceInYears, fromUnixTime, sub, isValid, parseISO, isEqual, startOfDay, formatDistance, parse, add } from 'date-fns'
 import { pl, hu, enGB } from 'date-fns/locale' // INFO: hardoced-locale-codes from date fns, you can add another in future
-import { IDateHelpersConfig, IExportedDateFormat } from '../interface/DateHelpersInterface'
+import { IDateHelpersConfig, IExportedDateFormat, IUseDateHelpersReturn } from '../interface/DateHelpersInterface'
 
-export function useDateHelpers (config?:IDateHelpersConfig) {
+
+export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersReturn {
   const dateOptions: Intl.DateTimeFormatOptions = { 
     day: '2-digit', 
     month: '2-digit', 
@@ -352,8 +353,8 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     return add(new Date(dateString), options)
   }
 
-  return {
-    format: {
+  const exportedFormat = ():IExportedDateFormat => {
+    return {
       js:{
         date: formatDate,
         dateTime: formatDateTime,
@@ -369,8 +370,11 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
       },
       dateISO: formatDateISO,
       dateTimeISO: formatDateTimeISO
-    } as IExportedDateFormat,
-    
+    } 
+  }
+
+  return {
+    format:exportedFormat(),
     humanDate,
     humanDateTime,
     humanDateTimeSec,
