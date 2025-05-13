@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { format, differenceInYears, fromUnixTime, sub, isValid, parseISO, isEqual, startOfDay, formatDistance, parse, add } from 'date-fns'
 import { pl, hu, enGB } from 'date-fns/locale' // INFO: hardoced-locale-codes from date fns, you can add another in future
-import { IDateHelpersConfig } from '../interface/DateHelpersInterface'
+import { IDateHelpersConfig, IExportedDateFormat } from '../interface/DateHelpersInterface'
 
 export function useDateHelpers (config?:IDateHelpersConfig) {
   const dateOptions: Intl.DateTimeFormatOptions = { 
@@ -34,47 +34,116 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     minute: '2-digit',
     hour12: false
   }
+
+  const convertLocalCode = () => {
+    if (!config?.localeCode) {
+      throw new Error('Missing locale code')
+    }
+    return config?.localeCode
+    .replace(/\..*$/, '')
+    .replace(/_/g, '-');
+  }
   
-  const generateFormatFromOptions = (options: Intl.DateTimeFormatOptions): string => {
-    let format = '';
+  const getDatePattern = () =>{
+    const localeCode = convertLocalCode()
+    const sampleDate = new Date(2025, 12, 31, 15, 30);  // default date for pattern with time
+    const options: Intl.DateTimeFormatOptions = {
+      year:  'numeric',
+      month: '2-digit',
+      day:   '2-digit'
+    };
     
-    if (options.year === 'numeric') format += 'YYYY';
-    else if (options.year === '2-digit') format += 'YY';
     
-    if (options.month === '2-digit') format += '/MM';
-    else if (options.month === 'numeric') format += '/M';
     
-    if (options.day === '2-digit') format += '/DD';
-    else if (options.day === 'numeric') format += '/D';
-    
-    if (options.hour === '2-digit') format += ' HH';
-    else if (options.hour === 'numeric') format += ' H';
-    
-    if (options.minute === '2-digit') format += ':mm';
-    else if (options.minute === 'numeric') format += ':m';
-    
-    if (options.second === '2-digit') format += ':ss';
-    else if (options.second === 'numeric') format += ':s';
-    
-    return format.trim();
-  };
+    const dtf = new Intl.DateTimeFormat(localeCode, options);
   
-  const formatDate = config?.userDateFormat?.date || generateFormatFromOptions(dateOptions);
-  const formatDateTime = config?.userDateFormat?.dateTime || generateFormatFromOptions(dateTimeOptions);
-  const formatDateTimeSec = config?.userDateFormat?.dateTimeSec || generateFormatFromOptions(dateTimeSecOptions);
-  const formatTime = config?.userDateFormat?.time || generateFormatFromOptions(timeOptions);
+    const tokenMap = { year: 'yyyy', month: 'MM', day: 'dd' }
+  
+    return dtf.formatToParts(sampleDate)
+      .map(part => part.type === 'literal'
+        ? part.value
+        : tokenMap[part.type as keyof typeof tokenMap]
+      )
+      .join('');
+  }
+  
+  const getDateTimePattern = () => {
+    const localeCode = convertLocalCode()
+    const sampleDate = new Date(2025, 12, 31, 15, 30);  // default date for pattern with time
+    const options: Intl.DateTimeFormatOptions = {
+      year:  'numeric',
+      month: '2-digit',
+      day:   '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    };
+    
+    const dtf = new Intl.DateTimeFormat(localeCode, options);
+  
+    const tokenMap = { year: 'yyyy', month: 'MM', day: 'dd', hour: 'HH', minute: 'mm' }
+  
+    return dtf.formatToParts(sampleDate)
+      .map(part => part.type === 'literal'
+        ? part.value
+        : tokenMap[part.type as keyof typeof tokenMap]
+      )
+      .join('');
+  }
+  
+  const getDateTimeSecPattern = () => {
+    const localeCode = convertLocalCode()
+    const sampleDate = new Date(2025, 12, 31, 15, 30, 45);  // default date for pattern with time and seconds
+    const options: Intl.DateTimeFormatOptions = {
+      year:  'numeric',
+      month: '2-digit',
+      day:   '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    };
+    
+    const dtf = new Intl.DateTimeFormat(localeCode, options);
+  
+    const tokenMap = { year: 'yyyy', month: 'MM', day: 'dd', hour: 'HH', minute: 'mm', second: 'ss' }
+  
+    return dtf.formatToParts(sampleDate)
+      .map(part => part.type === 'literal'
+        ? part.value
+        : tokenMap[part.type as keyof typeof tokenMap]
+      )
+      .join('');
+  }
+  
+  const getTimePattern = () => {
+    const localeCode = convertLocalCode()
+    const sampleDate = new Date(2025, 12, 31, 15, 30);  // default date for pattern with time
+    const options: Intl.DateTimeFormatOptions = {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    };
+    
+    const dtf = new Intl.DateTimeFormat(localeCode, options);
+  
+    const tokenMap = { hour: 'HH', minute: 'mm' }
+  
+    return dtf.formatToParts(sampleDate)
+      .map(part => part.type === 'literal'
+        ? part.value
+        : tokenMap[part.type as keyof typeof tokenMap]
+      )
+      .join('');
+  }
+  
+  const formatDate = config?.userDateFormat?.date || getDatePattern()
+  const formatDateTime = config?.userDateFormat?.dateTime || getDateTimePattern()
+  const formatDateTimeSec = config?.userDateFormat?.dateTimeSec || getDateTimeSecPattern()
+  const formatTime = config?.userDateFormat?.time || getTimePattern()
   const formatDateISO = 'YYYY-MM-DD';
   const formatDateTimeISO = 'YYYY-MM-DDTHH:mm:ss';
 
-  const FORMAT_MAP = <Record<string, string>>{
-    'YYYY': 'yyyy',
-    'YY': 'yy',
-    'MM': 'MM',
-    'DD': 'dd',
-    'HH': 'HH',
-    'mm': 'mm',
-    'ss': 'ss'
-  };
   const dayShortcuts: Record<string, Record<string, string>> = {
     pl: {
       poniedziałek: 'pon',
@@ -106,10 +175,38 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
   };
 
   const convertDateFormatQuasarToDateFns = (quasarFormat:string) => {
+    const FORMAT_MAP = <Record<string, string>>{
+      'YYYY': 'yyyy',
+      'YY': 'yy',
+      'MM': 'MM',
+      'DD': 'dd',
+      'HH': 'HH',
+      'mm': 'mm',
+      'ss': 'ss'
+    };
     return quasarFormat.replace(/YYYY|YY|MM|DD|HH|mm|ss/g, match => FORMAT_MAP[match] || match);
   };
-  const correctLocale = () => {
-    const localeCode = config?.localeCode || 'en_GB.utf8'
+  
+  const convertDateFormatDateFnsToQuasar = (dateFnsFormat:string) => {
+    const REVERSE_FORMAT_MAP = <Record<string, string>>{
+      'yyyy': 'YYYY',
+      'yy': 'YY',
+      'MM': 'MM',
+      'dd': 'DD',
+      'HH': 'HH',
+      'mm': 'mm',
+      'ss': 'ss'
+    };
+    
+    return dateFnsFormat.replace(/yyyy|yy|MM|dd|HH|mm|ss/g, match => REVERSE_FORMAT_MAP[match] || match);
+  };
+  
+  
+  const correctLocale = () => { //TODO:this function cannot be removed , its using lokalize from date-fns for timeago and other 
+    const localeCode = config?.localeCode
+    if (!localeCode) {
+      throw new Error('Missing locale code')
+    }
     switch (localeCode) {
       case 'pl_PL.utf8':
         return {localeCode:pl,lang:'pl'}
@@ -121,6 +218,7 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
         return {localeCode:enGB,lang:'en'}
     }
   }
+  
   const parseDateWithoutTimezone = (dateString: string | Date): Date => {
     if (typeof dateString === 'string' && dateString.includes('T')) {
       const [datePart, timePart] = dateString.split('T');
@@ -147,22 +245,22 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
 
   const time = (dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleTimeString(correctLocale().lang, timeOptions)
+    return date.toLocaleTimeString(convertLocalCode(), timeOptions)
   }
 
   const parseTime = (timeString: string) => {
     const parsedTime = parse(timeString, 'HH:mm:ss', new Date());
-    return parsedTime.toLocaleTimeString(correctLocale().lang, timeOptions)
+    return parsedTime.toLocaleTimeString(convertLocalCode(), timeOptions)
   }
 
   const humanDate = (dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleDateString(correctLocale().lang, dateOptions)
+    return date.toLocaleDateString(convertLocalCode(), dateOptions)
   }
 
   const humanDateTime = (dateString: string | Date) => {
     const date = new Date(dateString)
-    return date.toLocaleDateString(correctLocale().lang, dateTimeOptions)
+    return date.toLocaleDateString(convertLocalCode(), dateTimeOptions)
   }
 
   const sqlDateTime = (dateString: string | Date) => {
@@ -171,20 +269,20 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
 
   const humanDateTimeSec = (dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleDateString(correctLocale().lang, dateTimeSecOptions)
+    return date.toLocaleDateString(convertLocalCode(), dateTimeSecOptions)
   }
 
   const humanDateFromTimestamp = (dateString: number) => {
     const result = fromUnixTime(dateString / 1000)
-    return result.toLocaleDateString(correctLocale().lang, dateOptions)
+    return result.toLocaleDateString(convertLocalCode(), dateOptions)
   }
   const humanDateTimeFromTimestamp = (dateString: number) => {
     const result = fromUnixTime(dateString / 1000)
-    return result.toLocaleDateString(correctLocale().lang, dateTimeOptions)
+    return result.toLocaleDateString(convertLocalCode(), dateTimeOptions)
   }
   const humanDateTimeSecFromTimestamp = (dateString: number) => {
     const result = fromUnixTime(dateString / 1000)
-    return result.toLocaleDateString(correctLocale().lang, dateTimeSecOptions)
+    return result.toLocaleDateString(convertLocalCode(), dateTimeSecOptions)
   }
 
   const isDifferenceInYears = (dateString1: string | Date, dateString2: string | Date) => {
@@ -256,13 +354,23 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
 
   return {
     format: {
-      date: formatDate,
-      dateTime: formatDateTime,
-      dateTimeSec: formatDateTimeSec,
-      time: formatTime,
+      js:{
+        date: formatDate,
+        dateTime: formatDateTime,
+        dateTimeSec: formatDateTimeSec,
+        time: formatTime,
+        
+      },
+      quasar: {
+        date: convertDateFormatDateFnsToQuasar(formatDate),
+        dateTime: convertDateFormatDateFnsToQuasar(formatDateTime),
+        dateTimeSec: convertDateFormatDateFnsToQuasar(formatDateTimeSec),
+        time: convertDateFormatDateFnsToQuasar(formatTime),
+      },
       dateISO: formatDateISO,
       dateTimeISO: formatDateTimeISO
-    },
+    } as IExportedDateFormat,
+    
     humanDate,
     humanDateTime,
     humanDateTimeSec,
@@ -284,6 +392,7 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     correctLocale,
     addToDate,
     convertDateFormatQuasarToDateFns,
+    convertDateFormatDateFnsToQuasar,
     sqlDateTime,
     parseTime
   }
