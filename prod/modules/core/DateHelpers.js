@@ -31,10 +31,15 @@ export function useDateHelpers(config) {
         hour12: false
     };
     const convertLocalCode = () => {
-        if (!(config === null || config === void 0 ? void 0 : config.localeCode)) {
+        const localeCode = config === null || config === void 0 ? void 0 : config.localeCode;
+        if (!localeCode) {
             throw new Error('Missing locale code');
         }
-        return config === null || config === void 0 ? void 0 : config.localeCode.replace(/\..*$/, '').replace(/_/g, '-');
+        const dotPos = localeCode.indexOf('.');
+        const base = dotPos === -1
+            ? localeCode
+            : localeCode.substring(0, dotPos);
+        return base.replaceAll('_', '-');
     };
     const getDatePattern = () => {
         const localeCode = convertLocalCode();
