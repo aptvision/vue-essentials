@@ -58,5 +58,6 @@ export interface IUseDateHelpersReturn {
     convertDateFormatDateFnsToQuasar(dateFnsFormat: string): string;
     sqlDateTime(date: string | Date): string;
     parseTime(timeString: string): string;
+    formatLocaleDate(dateString: string, format: string): string;
 }
 export {};
