@@ -1,18 +1,10 @@
 import { ref } from 'vue'
 import { format, differenceInYears, fromUnixTime, sub, isValid, parseISO, isEqual, startOfDay, formatDistance, parse, add } from 'date-fns'
 import { pl, hu, enGB } from 'date-fns/locale' // INFO: hardoced-locale-codes from date fns, you can add another in future
-import { IDateHelpersConfig } from '../interface/DateHelpersInterface'
+import { IDateHelpersConfig, IExportedDateFormat, IUseDateHelpersReturn } from '../interface/DateHelpersInterface'
 
-export function useDateHelpers (config?:IDateHelpersConfig) {
-  // Zachowujemy oryginalne formaty dla kompatybilności
-  const formatDate = config?.userDateFormat?.date || 'YYYY/MM/DD'
-  const formatDateTime = config?.userDateFormat?.dateTime || 'YYYY/MM/DD HH:mm'
-  const formatDateTimeSec = config?.userDateFormat?.dateTimeSec || 'YYYY/MM/DD HH:mm:ss'
-  const formatTime = config?.userDateFormat?.time || 'HH:mm'
-  const formatDateISO = 'YYYY-MM-DD'
-  const formatDateTimeISO = 'YYYY-MM-DDTHH:mm:ss'
-  
-  // Opcje dla natywnego Date.toLocaleDateString/toLocaleTimeString
+
+export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersReturn {
   const dateOptions: Intl.DateTimeFormatOptions = { 
     day: '2-digit', 
     month: '2-digit', 
@@ -44,15 +36,155 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     hour12: false
   }
 
-  const FORMAT_MAP = <Record<string, string>>{
-    'YYYY': 'yyyy',
-    'YY': 'yy',
-    'MM': 'MM',
-    'DD': 'dd',
-    'HH': 'HH',
-    'mm': 'mm',
-    'ss': 'ss'
-  };
+  const convertLocaleCode = () => {
+    const localeCode = config && config.localeCode;
+    
+    if (!localeCode) {
+      throw new Error('Missing locale code');
+    }
+    if (!localeCode.match(/^[a-z][a-z].?[A-Z][A-Z]/)) {  
+      throw new Error('Invalid locale code'); 
+    }
+     
+    return localeCode[0] + localeCode[1] + '-' + localeCode[3] + localeCode[4]
+  }
+  const localeCode = convertLocaleCode()
+  const getDatePattern = () =>{
+    const sampleDate = new Date();  // default date for pattern with time
+    const options: Intl.DateTimeFormatOptions = {
+      year:  'numeric',
+      month: '2-digit',
+      day:   '2-digit'
+    };
+    
+    
+    
+    const dtf = new Intl.DateTimeFormat(localeCode, options);
+  
+    const tokenMap = { year: 'yyyy', month: 'MM', day: 'dd' }
+  
+    return dtf.formatToParts(sampleDate)
+      .map(part => part.type === 'literal'
+        ? part.value
+        : tokenMap[part.type as keyof typeof tokenMap]
+      )
+      .join('');
+  }
+  
+  const getDateTimePattern = () => {
+    const sampleDate = new Date();  // default date for pattern with time
+    const options: Intl.DateTimeFormatOptions = {
+      year:  'numeric',
+      month: '2-digit',
+      day:   '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    };
+    
+    const dtf = new Intl.DateTimeFormat(localeCode, options);
+  
+    const tokenMap = { year: 'yyyy', month: 'MM', day: 'dd', hour: 'HH', minute: 'mm' }
+  
+    return dtf.formatToParts(sampleDate)
+      .map(part => part.type === 'literal'
+        ? part.value
+        : tokenMap[part.type as keyof typeof tokenMap]
+      )
+      .join('');
+  }
+  
+  const getDateTimeSecPattern = () => {
+    const sampleDate = new Date();  // default date for pattern with time and seconds
+    const options: Intl.DateTimeFormatOptions = {
+      year:  'numeric',
+      month: '2-digit',
+      day:   '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    };
+    
+    const dtf = new Intl.DateTimeFormat(localeCode, options);
+  
+    const tokenMap = { year: 'yyyy', month: 'MM', day: 'dd', hour: 'HH', minute: 'mm', second: 'ss' }
+  
+    return dtf.formatToParts(sampleDate)
+      .map(part => part.type === 'literal'
+        ? part.value
+        : tokenMap[part.type as keyof typeof tokenMap]
+      )
+      .join('');
+  }
+  
+  const getTimePattern = () => {
+    const sampleDate = new Date();  // default date for pattern with time
+    const options: Intl.DateTimeFormatOptions = {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    };
+    
+    const dtf = new Intl.DateTimeFormat(localeCode, options);
+  
+    const tokenMap = { hour: 'HH', minute: 'mm' }
+  
+    return dtf.formatToParts(sampleDate)
+      .map(part => part.type === 'literal'
+        ? part.value
+        : tokenMap[part.type as keyof typeof tokenMap]
+      )
+      .join('');
+  }
+
+  // dateStr only iso format date , formatStr - custom native format 'd MMMM' for example 
+  const formatLocaleDate = (dateStr: string,formatStr = getDateTimeSecPattern()): string => {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) {
+      throw new Error(`Invalid ISO Date: "${dateStr}"`);
+    }
+  
+    const yearNum  = date.getFullYear();
+    const monthNum = date.getMonth() + 1;
+    const dayNum   = date.getDate();
+    const hourNum  = date.getHours();
+    const minNum   = date.getMinutes();
+    const secNum   = date.getSeconds();
+  
+    const tokens: Record<string,string> = {
+      yyyy: String(yearNum),
+      yy:   String(yearNum).slice(-2),
+  
+      MMMM: new Intl.DateTimeFormat(localeCode, { month: "long"  }).format(date),
+      MMM:  new Intl.DateTimeFormat(localeCode, { month: "short" }).format(date),
+      mm:   String(monthNum).padStart(2, "0"),
+      m:    String(monthNum),
+  
+      dd:   String(dayNum).padStart(2, "0"),
+      d:    String(dayNum),
+  
+      HH:   String(hourNum).padStart(2, "0"),
+      H:    String(hourNum),
+      ii:   String(minNum).padStart(2, "0"), // użyłem "ii" żeby nie kolidować z "mm" miesiąca
+      i:    String(minNum),
+      ss:   String(secNum).padStart(2, "0"),
+      s:    String(secNum),
+    };
+  
+    return formatStr.replace(
+      /(yyyy|MMMM|MMM|dd|yy|mm|m|d|HH|H|ii|i|ss|s)/g,
+      (tok) => tokens[tok]
+    );
+  }
+  
+  const formatDate = config?.userDateFormat?.date || getDatePattern()
+  const formatDateTime = config?.userDateFormat?.dateTime || getDateTimePattern()
+  const formatDateTimeSec = config?.userDateFormat?.dateTimeSec || getDateTimeSecPattern()
+  const formatTime = config?.userDateFormat?.time || getTimePattern()
+  const formatDateISO = 'YYYY-MM-DD';
+  const formatDateTimeISO = 'YYYY-MM-DDTHH:mm:ss';
+
   const dayShortcuts: Record<string, Record<string, string>> = {
     pl: {
       poniedziałek: 'pon',
@@ -63,7 +195,7 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
       sobota: 'sob',
       niedziela: 'nd'
     },
-    enGB: {
+    en: {
       Monday: 'Mon',
       Tuesday: 'Tue',
       Wednesday: 'Wed',
@@ -84,21 +216,50 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
   };
 
   const convertDateFormatQuasarToDateFns = (quasarFormat:string) => {
+    const FORMAT_MAP = <Record<string, string>>{
+      'YYYY': 'yyyy',
+      'YY': 'yy',
+      'MM': 'MM',
+      'DD': 'dd',
+      'HH': 'HH',
+      'mm': 'mm',
+      'ss': 'ss'
+    };
     return quasarFormat.replace(/YYYY|YY|MM|DD|HH|mm|ss/g, match => FORMAT_MAP[match] || match);
   };
-  const correctLocale = () => {
-    const localeCode = config?.localeCode || 'en_GB.utf8'
+  
+  const convertDateFormatDateFnsToQuasar = (dateFnsFormat:string) => {
+    const REVERSE_FORMAT_MAP = <Record<string, string>>{
+      'yyyy': 'YYYY',
+      'yy': 'YY',
+      'MM': 'MM',
+      'dd': 'DD',
+      'HH': 'HH',
+      'mm': 'mm',
+      'ss': 'ss'
+    };
+    
+    return dateFnsFormat.replace(/yyyy|yy|MM|dd|HH|mm|ss/g, match => REVERSE_FORMAT_MAP[match] || match);
+  };
+  
+  
+  const correctLocale = () => { //TODO:this function cannot be removed , its using lokalize from date-fns for timeago and other 
+    const localeCode = config?.localeCode
+    if (!localeCode) {
+      throw new Error('Missing locale code')
+    }
     switch (localeCode) {
       case 'pl_PL.utf8':
         return {localeCode:pl,lang:'pl'}
       case 'hu_HU.utf8':
         return {localeCode:hu,lang:'hu'}
       case 'en_GB.utf8':
-        return {localeCode:enGB,lang:'enGB'}
+        return {localeCode:enGB,lang:'en'}
       default:
-        return {localeCode:enGB,lang:'enGB'}
+        return {localeCode:enGB,lang:'en'}
     }
   }
+  
   const parseDateWithoutTimezone = (dateString: string | Date): Date => {
     if (typeof dateString === 'string' && dateString.includes('T')) {
       const [datePart, timePart] = dateString.split('T');
@@ -125,22 +286,22 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
 
   const time = (dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleTimeString(correctLocale().lang, timeOptions)
+    return date.toLocaleTimeString(localeCode, timeOptions)
   }
 
   const parseTime = (timeString: string) => {
     const parsedTime = parse(timeString, 'HH:mm:ss', new Date());
-    return parsedTime.toLocaleTimeString(correctLocale().lang, timeOptions)
+    return parsedTime.toLocaleTimeString(localeCode, timeOptions)
   }
 
   const humanDate = (dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleDateString(correctLocale().lang, dateOptions)
+    return date.toLocaleDateString(localeCode, dateOptions)
   }
 
   const humanDateTime = (dateString: string | Date) => {
     const date = new Date(dateString)
-    return date.toLocaleDateString(correctLocale().lang, dateTimeOptions)
+    return date.toLocaleDateString(localeCode, dateTimeOptions)
   }
 
   const sqlDateTime = (dateString: string | Date) => {
@@ -149,20 +310,20 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
 
   const humanDateTimeSec = (dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleDateString(correctLocale().lang, dateTimeSecOptions)
+    return date.toLocaleDateString(localeCode, dateTimeSecOptions)
   }
 
   const humanDateFromTimestamp = (dateString: number) => {
     const result = fromUnixTime(dateString / 1000)
-    return result.toLocaleDateString(correctLocale().lang, dateOptions)
+    return result.toLocaleDateString(localeCode, dateOptions)
   }
   const humanDateTimeFromTimestamp = (dateString: number) => {
     const result = fromUnixTime(dateString / 1000)
-    return result.toLocaleDateString(correctLocale().lang, dateTimeOptions)
+    return result.toLocaleDateString(localeCode, dateTimeOptions)
   }
   const humanDateTimeSecFromTimestamp = (dateString: number) => {
     const result = fromUnixTime(dateString / 1000)
-    return result.toLocaleDateString(correctLocale().lang, dateTimeSecOptions)
+    return result.toLocaleDateString(localeCode, dateTimeSecOptions)
   }
 
   const isDifferenceInYears = (dateString1: string | Date, dateString2: string | Date) => {
@@ -232,15 +393,28 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     return add(new Date(dateString), options)
   }
 
-  return {
-    format: {
-      date: formatDate,
-      dateTime: formatDateTime,
-      dateTimeSec: formatDateTimeSec,
-      time: formatTime,
+  const exportedFormat = ():IExportedDateFormat => {
+    return {
+      js:{
+        date: formatDate,
+        dateTime: formatDateTime,
+        dateTimeSec: formatDateTimeSec,
+        time: formatTime,
+        
+      },
+      quasar: {
+        date: convertDateFormatDateFnsToQuasar(formatDate),
+        dateTime: convertDateFormatDateFnsToQuasar(formatDateTime),
+        dateTimeSec: convertDateFormatDateFnsToQuasar(formatDateTimeSec),
+        time: convertDateFormatDateFnsToQuasar(formatTime),
+      },
       dateISO: formatDateISO,
       dateTimeISO: formatDateTimeISO
-    },
+    } 
+  }
+
+  return {
+    format:exportedFormat(),
     humanDate,
     humanDateTime,
     humanDateTimeSec,
@@ -262,7 +436,9 @@ export function useDateHelpers (config?:IDateHelpersConfig) {
     correctLocale,
     addToDate,
     convertDateFormatQuasarToDateFns,
+    convertDateFormatDateFnsToQuasar,
     sqlDateTime,
-    parseTime
+    parseTime,
+    formatLocaleDate
   }
 }
