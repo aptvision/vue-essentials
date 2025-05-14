@@ -137,6 +137,46 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
       )
       .join('');
   }
+
+  // dateStr only iso format date , formatStr - custom native format 'd MMMM' for example 
+  const formatLocaleDate = (dateStr: string,formatStr = getDateTimeSecPattern()): string => {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) {
+      throw new Error(`Invalid ISO Date: "${dateStr}"`);
+    }
+  
+    const yearNum  = date.getFullYear();
+    const monthNum = date.getMonth() + 1;
+    const dayNum   = date.getDate();
+    const hourNum  = date.getHours();
+    const minNum   = date.getMinutes();
+    const secNum   = date.getSeconds();
+  
+    const tokens: Record<string,string> = {
+      yyyy: String(yearNum),
+      yy:   String(yearNum).slice(-2),
+  
+      MMMM: new Intl.DateTimeFormat(localeCode, { month: "long"  }).format(date),
+      MMM:  new Intl.DateTimeFormat(localeCode, { month: "short" }).format(date),
+      mm:   String(monthNum).padStart(2, "0"),
+      m:    String(monthNum),
+  
+      dd:   String(dayNum).padStart(2, "0"),
+      d:    String(dayNum),
+  
+      HH:   String(hourNum).padStart(2, "0"),
+      H:    String(hourNum),
+      ii:   String(minNum).padStart(2, "0"), // użyłem "ii" żeby nie kolidować z "mm" miesiąca
+      i:    String(minNum),
+      ss:   String(secNum).padStart(2, "0"),
+      s:    String(secNum),
+    };
+  
+    return formatStr.replace(
+      /(yyyy|MMMM|MMM|dd|yy|mm|m|d|HH|H|ii|i|ss|s)/g,
+      (tok) => tokens[tok]
+    );
+  }
   
   const formatDate = config?.userDateFormat?.date || getDatePattern()
   const formatDateTime = config?.userDateFormat?.dateTime || getDateTimePattern()
@@ -398,6 +438,7 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
     convertDateFormatQuasarToDateFns,
     convertDateFormatDateFnsToQuasar,
     sqlDateTime,
-    parseTime
+    parseTime,
+    formatLocaleDate
   }
 }

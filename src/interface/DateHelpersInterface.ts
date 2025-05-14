@@ -53,5 +53,6 @@ export interface IUseDateHelpersReturn {
   convertDateFormatQuasarToDateFns(quasarFormat: string): string
   convertDateFormatDateFnsToQuasar(dateFnsFormat: string): string
   sqlDateTime(date: string | Date): string
-  parseTime(timeString: string): string
+  parseTime(timeString: string): string,
+  formatLocaleDate(dateString: string, format:string): string
 }
