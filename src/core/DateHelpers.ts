@@ -36,7 +36,7 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
     hour12: false
   }
 
-  const convertLocalCode = () => {
+  const convertLocaleCode = () => {
     const localeCode = config && config.localeCode;
     
     if (!localeCode) {
@@ -48,7 +48,7 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
      
     return localeCode[0] + localeCode[1] + '-' + localeCode[3] + localeCode[4]
   }
-  const localeCode = convertLocalCode()
+  const localeCode = convertLocaleCode()
   const getDatePattern = () =>{
     const sampleDate = new Date();  // default date for pattern with time
     const options: Intl.DateTimeFormatOptions = {
