@@ -35,12 +35,14 @@ export function useDateHelpers(config) {
         if (!localeCode) {
             throw new Error('Missing locale code');
         }
-        const base = localeCode.split('.')[0];
-        return base.replace('_', '-');
+        if (!localeCode.match(/^[a-z][a-z].?[A-Z][A-Z]/)) {
+            throw new Error('Invalid locale code');
+        }
+        return localeCode[0] + localeCode[1] + '-' + localeCode[3] + localeCode[4];
     };
+    const localeCode = convertLocalCode();
     const getDatePattern = () => {
-        const localeCode = convertLocalCode();
-        const sampleDate = new Date(2025, 12, 31, 15, 30); // default date for pattern with time
+        const sampleDate = new Date(); // default date for pattern with time
         const options = {
             year: 'numeric',
             month: '2-digit',
@@ -55,8 +57,7 @@ export function useDateHelpers(config) {
             .join('');
     };
     const getDateTimePattern = () => {
-        const localeCode = convertLocalCode();
-        const sampleDate = new Date(2025, 12, 31, 15, 30); // default date for pattern with time
+        const sampleDate = new Date(); // default date for pattern with time
         const options = {
             year: 'numeric',
             month: '2-digit',
@@ -74,8 +75,7 @@ export function useDateHelpers(config) {
             .join('');
     };
     const getDateTimeSecPattern = () => {
-        const localeCode = convertLocalCode();
-        const sampleDate = new Date(2025, 12, 31, 15, 30, 45); // default date for pattern with time and seconds
+        const sampleDate = new Date(); // default date for pattern with time and seconds
         const options = {
             year: 'numeric',
             month: '2-digit',
@@ -94,8 +94,7 @@ export function useDateHelpers(config) {
             .join('');
     };
     const getTimePattern = () => {
-        const localeCode = convertLocalCode();
-        const sampleDate = new Date(2025, 12, 31, 15, 30); // default date for pattern with time
+        const sampleDate = new Date(); // default date for pattern with time
         const options = {
             hour: '2-digit',
             minute: '2-digit',
@@ -205,38 +204,38 @@ export function useDateHelpers(config) {
     };
     const time = (dateString) => {
         const date = new Date(dateString);
-        return date.toLocaleTimeString(convertLocalCode(), timeOptions);
+        return date.toLocaleTimeString(localeCode, timeOptions);
     };
     const parseTime = (timeString) => {
         const parsedTime = parse(timeString, 'HH:mm:ss', new Date());
-        return parsedTime.toLocaleTimeString(convertLocalCode(), timeOptions);
+        return parsedTime.toLocaleTimeString(localeCode, timeOptions);
     };
     const humanDate = (dateString) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString(convertLocalCode(), dateOptions);
+        return date.toLocaleDateString(localeCode, dateOptions);
     };
     const humanDateTime = (dateString) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString(convertLocalCode(), dateTimeOptions);
+        return date.toLocaleDateString(localeCode, dateTimeOptions);
     };
     const sqlDateTime = (dateString) => {
         return new Date(dateString).toISOString();
     };
     const humanDateTimeSec = (dateString) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString(convertLocalCode(), dateTimeSecOptions);
+        return date.toLocaleDateString(localeCode, dateTimeSecOptions);
     };
     const humanDateFromTimestamp = (dateString) => {
         const result = fromUnixTime(dateString / 1000);
-        return result.toLocaleDateString(convertLocalCode(), dateOptions);
+        return result.toLocaleDateString(localeCode, dateOptions);
     };
     const humanDateTimeFromTimestamp = (dateString) => {
         const result = fromUnixTime(dateString / 1000);
-        return result.toLocaleDateString(convertLocalCode(), dateTimeOptions);
+        return result.toLocaleDateString(localeCode, dateTimeOptions);
     };
     const humanDateTimeSecFromTimestamp = (dateString) => {
         const result = fromUnixTime(dateString / 1000);
-        return result.toLocaleDateString(convertLocalCode(), dateTimeSecOptions);
+        return result.toLocaleDateString(localeCode, dateTimeSecOptions);
     };
     const isDifferenceInYears = (dateString1, dateString2) => {
         return differenceInYears(convertDate(dateString1), convertDate(dateString2));
