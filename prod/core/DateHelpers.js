@@ -29,7 +29,7 @@ export function useDateHelpers(config) {
         minute: '2-digit',
         hour12: false
     };
-    const convertLocalCode = () => {
+    const convertLocaleCode = () => {
         const localeCode = config && config.localeCode;
         if (!localeCode) {
             throw new Error('Missing locale code');
@@ -39,7 +39,7 @@ export function useDateHelpers(config) {
         }
         return localeCode[0] + localeCode[1] + '-' + localeCode[3] + localeCode[4];
     };
-    const localeCode = convertLocalCode();
+    const localeCode = convertLocaleCode();
     const getDatePattern = () => {
         const sampleDate = new Date(); // default date for pattern with time
         const options = {
