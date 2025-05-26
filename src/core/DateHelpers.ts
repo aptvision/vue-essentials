@@ -61,7 +61,7 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
     
     const dtf = new Intl.DateTimeFormat(localeCode, options);
   
-    const tokenMap = { year: 'yyyy', month: 'MM', day: 'dd' }
+    const tokenMap = { year: 'yyyy', month: 'mm', day: 'dd' }
   
     return dtf.formatToParts(sampleDate)
       .map(part => part.type === 'literal'
@@ -84,7 +84,7 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
     
     const dtf = new Intl.DateTimeFormat(localeCode, options);
   
-    const tokenMap = { year: 'yyyy', month: 'MM', day: 'dd', hour: 'HH', minute: 'mm' }
+    const tokenMap = { year: 'yyyy', month: 'mm', day: 'dd', hour: 'HH', minute: 'mm' }
   
     return dtf.formatToParts(sampleDate)
       .map(part => part.type === 'literal'
@@ -108,7 +108,7 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
     
     const dtf = new Intl.DateTimeFormat(localeCode, options);
   
-    const tokenMap = { year: 'yyyy', month: 'MM', day: 'dd', hour: 'HH', minute: 'mm', second: 'ss' }
+    const tokenMap = { year: 'yyyy', month: 'mm', day: 'dd', hour: 'HH', minute: 'mm', second: 'ss' }
   
     return dtf.formatToParts(sampleDate)
       .map(part => part.type === 'literal'
