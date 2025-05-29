@@ -2,7 +2,6 @@ import VueJwtDecode from 'vue-jwt-decode'
 
 import { JsonObject } from '../interface'
 
-console.log('czy jednak tam?')
 export interface IAuthToken {
   token_type: string;
   expires_in: number;
