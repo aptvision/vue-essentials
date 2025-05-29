@@ -55,4 +55,23 @@ export interface IUseDateHelpersReturn {
   sqlDateTime(date: string | Date): string
   parseTime(timeString: string): string,
   formatLocaleDate(dateString: string, format:string): string
+  dateDiff(interval: TDateDiffInterval, date1: string | Date, date2: string | Date): number
 }
+
+export type TDateDiffInterval =
+  | 'YEARS'
+  | 'QUARTERS'
+  | 'MONTHS'
+  | 'WEEKS'
+  | 'DAYS'
+  | 'HOURS'
+  | 'MINUTES'
+  | 'SECONDS'
+  | 'MILLISECONDS'
+  | 'CALENDAR_DAYS'
+  | 'CALENDAR_WEEKS'
+  | 'CALENDAR_ISO_WEEKS'
+  | 'CALENDAR_MONTHS'
+  | 'CALENDAR_QUARTERS'
+  | 'CALENDAR_YEARS'
+  | 'BUSINESS_DAYS'
