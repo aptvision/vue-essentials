@@ -1,6 +1,24 @@
 import { ref } from 'vue';
-import { format, differenceInYears, fromUnixTime, sub, isValid, parseISO, isEqual, startOfDay, formatDistance, parse, add } from 'date-fns';
+import { format, fromUnixTime, sub, isValid, parseISO, isEqual, startOfDay, formatDistance, parse, add, differenceInYears, differenceInQuarters, differenceInMonths, differenceInWeeks, differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds, differenceInMilliseconds, differenceInCalendarDays, differenceInCalendarWeeks, differenceInCalendarISOWeeks, differenceInCalendarMonths, differenceInCalendarQuarters, differenceInCalendarYears, differenceInBusinessDays, } from 'date-fns';
 import { pl, hu, enGB } from 'date-fns/locale'; // INFO: hardoced-locale-codes from date fns, you can add another in future
+const intervalFunctionMap = {
+    YEARS: differenceInYears,
+    QUARTERS: differenceInQuarters,
+    MONTHS: differenceInMonths,
+    WEEKS: differenceInWeeks,
+    DAYS: differenceInDays,
+    HOURS: differenceInHours,
+    MINUTES: differenceInMinutes,
+    SECONDS: differenceInSeconds,
+    MILLISECONDS: differenceInMilliseconds,
+    CALENDAR_DAYS: differenceInCalendarDays,
+    CALENDAR_WEEKS: differenceInCalendarWeeks,
+    CALENDAR_ISO_WEEKS: differenceInCalendarISOWeeks,
+    CALENDAR_MONTHS: differenceInCalendarMonths,
+    CALENDAR_QUARTERS: differenceInCalendarQuarters,
+    CALENDAR_YEARS: differenceInCalendarYears,
+    BUSINESS_DAYS: differenceInBusinessDays,
+};
 export function useDateHelpers(config) {
     const dateOptions = {
         day: '2-digit',
@@ -107,7 +125,7 @@ export function useDateHelpers(config) {
             : tokenMap[part.type])
             .join('');
     };
-    // dateStr only iso format date , formatStr - custom native format 'd MMMM' for example 
+    // dateStr only iso format date , formatStr - custom native format 'd MMMM' for example
     const formatLocaleDate = (dateStr, formatStr = getDateTimeSecPattern()) => {
         const date = new Date(dateStr);
         if (isNaN(date.getTime())) {
@@ -266,6 +284,13 @@ export function useDateHelpers(config) {
         const result = fromUnixTime(dateString / 1000);
         return result.toLocaleDateString(localeCode, dateTimeSecOptions);
     };
+    const dateDiff = (interval, date1, date2) => {
+        const diffFunction = intervalFunctionMap[interval.toUpperCase()];
+        if (!diffFunction || typeof diffFunction !== 'function') {
+            throw new Error('No method matches diff interval: ' + interval);
+        }
+        return diffFunction(convertDate(date1), convertDate(date2));
+    };
     const isDifferenceInYears = (dateString1, dateString2) => {
         return differenceInYears(convertDate(dateString1), convertDate(dateString2));
     };
@@ -350,6 +375,7 @@ export function useDateHelpers(config) {
         doesIncludeTime,
         useTimeAgo,
         time,
+        dateDiff,
         currentDateSql,
         typeOptions,
         relativeDateOptions,

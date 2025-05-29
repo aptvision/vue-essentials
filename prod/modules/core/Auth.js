@@ -1,4 +1,5 @@
 import VueJwtDecode from 'vue-jwt-decode';
+console.log('czy jednak tam?');
 export const useAuth = (config) => {
     const saveToken = (token) => {
         if (!doVerifyToken(token)) {

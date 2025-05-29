@@ -17,6 +17,7 @@ export interface IAuth {
     handleVerifiedToken: (token: string) => void;
     verifySavedToken: () => boolean;
     logOut: (defaultLogout: () => void) => void;
+    getToken: () => string | null;
 }
 export interface IAuthConfig {
     authTokenName: string;
