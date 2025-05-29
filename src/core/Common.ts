@@ -12,6 +12,10 @@ export const useCommonHelpers = () => {
     return typeof value === 'object' && value && !Array.isArray(value)
   }
 
+  function ucfirst(str: string): string {
+    return String(str).charAt(0).toUpperCase() + String(str).slice(1);
+  }
+
   const cloneDeep = (obj: object) => {
     return extend(true,{}, obj)
   }
@@ -19,6 +23,7 @@ export const useCommonHelpers = () => {
   return {
     isEmpty,
     isObject,
-    cloneDeep
+    cloneDeep,
+    ucfirst,
   }
 }

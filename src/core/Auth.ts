@@ -2,6 +2,7 @@ import VueJwtDecode from 'vue-jwt-decode'
 
 import { JsonObject } from '../interface'
 
+console.log('czy jednak tam?')
 export interface IAuthToken {
   token_type: string;
   expires_in: number;
@@ -20,6 +21,7 @@ export interface IAuth {
   handleVerifiedToken: (token: string) => void;
   verifySavedToken: () => boolean;
   logOut: (defaultLogout: () => void) => void;
+  getToken: () => string | null;
 }
 
 interface DecodedToken {
