@@ -92,11 +92,15 @@ export const useApiRest = (config) => {
             }
             throw new AuthorizationException('403 - forbidden');
         }
-        if (![200, 201].includes(response.status)) {
+        console.log(response.status);
+        if (![200, 201, 204].includes(response.status)) {
             throw new Error(response.statusText);
         }
     };
     const responseToJson = (response) => {
+        if (response.status === 204) {
+            return {};
+        }
         const json = response.json();
         if (typeof json !== 'object' || json === null) {
             throw new Error('Response is not json object');
