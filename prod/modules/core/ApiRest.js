@@ -92,7 +92,6 @@ export const useApiRest = (config) => {
             }
             throw new AuthorizationException('403 - forbidden');
         }
-        console.log(response.status);
         if (![200, 201, 204].includes(response.status)) {
             throw new Error(response.statusText);
         }
