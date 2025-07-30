@@ -46,9 +46,9 @@ export interface IUseDateHelpersReturn {
   relativeDateOptions: Ref<Array<{ value: string; label: string }>>
   getDayAndTime(
     dateString: string | Date,
-    shortCutDay?: boolean
+    options?: { shortCutDay?: boolean; timeWithSeconds?: boolean }
   ): { day: string; time: string }
-  correctLocale(): { localeCode: Locale; lang: string }
+  dateFnsLocale(): { locale: Locale }
   addToDate(date: string | Date, options: Record<string, number>): Date
   convertDateFormatQuasarToDateFns(quasarFormat: string): string
   convertDateFormatDateFnsToQuasar(dateFnsFormat: string): string

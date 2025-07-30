@@ -162,35 +162,6 @@ export function useDateHelpers(config) {
     const formatTime = ((_d = config === null || config === void 0 ? void 0 : config.userDateFormat) === null || _d === void 0 ? void 0 : _d.time) || getTimePattern();
     const formatDateISO = 'YYYY-MM-DD';
     const formatDateTimeISO = 'YYYY-MM-DDTHH:mm:ss';
-    const dayShortcuts = {
-        pl: {
-            poniedziałek: 'pon',
-            wtorek: 'wt',
-            środa: 'śr',
-            czwartek: 'czw',
-            piątek: 'pt',
-            sobota: 'sob',
-            niedziela: 'nd'
-        },
-        en: {
-            Monday: 'Mon',
-            Tuesday: 'Tue',
-            Wednesday: 'Wed',
-            Thursday: 'Thu',
-            Friday: 'Fri',
-            Saturday: 'Sat',
-            Sunday: 'Sun'
-        },
-        hu: {
-            hétfő: 'hét',
-            kedd: 'kedd',
-            szerda: 'sze',
-            csütörtök: 'csüt',
-            péntek: 'pén',
-            szombat: 'szo',
-            vasárnap: 'vas'
-        }
-    };
     const convertDateFormatQuasarToDateFns = (quasarFormat) => {
         const FORMAT_MAP = {
             'YYYY': 'yyyy',
@@ -215,20 +186,19 @@ export function useDateHelpers(config) {
         };
         return dateFnsFormat.replace(/yyyy|yy|MM|dd|HH|mm|ss/g, match => REVERSE_FORMAT_MAP[match] || match);
     };
-    const correctLocale = () => {
-        const localeCode = config === null || config === void 0 ? void 0 : config.localeCode;
+    const dateFnsLocale = () => {
         if (!localeCode) {
             throw new Error('Missing locale code');
         }
         switch (localeCode) {
-            case 'pl_PL.utf8':
-                return { localeCode: pl, lang: 'pl' };
-            case 'hu_HU.utf8':
-                return { localeCode: hu, lang: 'hu' };
-            case 'en_GB.utf8':
-                return { localeCode: enGB, lang: 'en' };
+            case 'pl-PL':
+                return { locale: pl };
+            case 'hu-HU':
+                return { locale: hu };
+            case 'en-GB':
+                return { locale: enGB };
             default:
-                return { localeCode: enGB, lang: 'en' };
+                return { locale: enGB };
         }
     };
     const parseDateWithoutTimezone = (dateString) => {
@@ -298,22 +268,22 @@ export function useDateHelpers(config) {
     const substractFromDate = (dateString, options) => {
         return sub(dateString, options);
     };
-    const getDayAndTime = (dateString, shortCutDay = false) => {
+    const getDayAndTime = (dateString, options = {}) => {
         const date = parseDateWithoutTimezone(dateString);
-        const localize = correctLocale();
+        const localize = dateFnsLocale();
         const result = {
-            day: format(date, "EEEE", { locale: localize.localeCode }),
-            time: format(date, "HH:mm", { locale: localize.localeCode })
+            day: format(date, "EEEE", { locale: localize.locale }),
+            time: format(date, options.timeWithSeconds ? "HH:mm:ss" : "HH:mm", { locale: localize.locale })
         };
-        if (shortCutDay) {
-            result.day = dayShortcuts[localize.lang][result.day];
+        if (options.shortCutDay) {
+            result.day = date.toLocaleDateString(localeCode, { weekday: 'short' });
         }
         return result;
     };
     const useTimeAgo = (dateString = null, options) => {
         const currentDate = new Date();
         const baseDate = sub(dateString ? dateString : new Date(), options);
-        return formatDistance(baseDate, currentDate, Object.assign({ addSuffix: true, locale: correctLocale().localeCode }, options));
+        return formatDistance(baseDate, currentDate, Object.assign({ addSuffix: true, locale: dateFnsLocale().locale }, options));
     };
     const typeOptions = ref([
         { value: 'relative', label: (_f = (_e = config === null || config === void 0 ? void 0 : config.$_t) === null || _e === void 0 ? void 0 : _e.call(config, 'Relative Date')) !== null && _f !== void 0 ? _f : 'Relative Date', },
@@ -381,7 +351,7 @@ export function useDateHelpers(config) {
         typeOptions,
         relativeDateOptions,
         getDayAndTime,
-        correctLocale,
+        dateFnsLocale,
         addToDate,
         convertDateFormatQuasarToDateFns,
         convertDateFormatDateFnsToQuasar,

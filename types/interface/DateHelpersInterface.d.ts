@@ -45,13 +45,15 @@ export interface IUseDateHelpersReturn {
         value: string;
         label: string;
     }>>;
-    getDayAndTime(dateString: string | Date, shortCutDay?: boolean): {
+    getDayAndTime(dateString: string | Date, options?: {
+        shortCutDay?: boolean;
+        timeWithSeconds?: boolean;
+    }): {
         day: string;
         time: string;
     };
-    correctLocale(): {
-        localeCode: Locale;
-        lang: string;
+    dateFnsLocale(): {
+        locale: Locale;
     };
     addToDate(date: string | Date, options: Record<string, number>): Date;
     convertDateFormatQuasarToDateFns(quasarFormat: string): string;

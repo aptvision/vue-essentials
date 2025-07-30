@@ -230,35 +230,6 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
   const formatDateISO = 'YYYY-MM-DD';
   const formatDateTimeISO = 'YYYY-MM-DDTHH:mm:ss';
 
-  const dayShortcuts: Record<string, Record<string, string>> = {
-    pl: {
-      poniedziałek: 'pon',
-      wtorek: 'wt',
-      środa: 'śr',
-      czwartek: 'czw',
-      piątek: 'pt',
-      sobota: 'sob',
-      niedziela: 'nd'
-    },
-    en: {
-      Monday: 'Mon',
-      Tuesday: 'Tue',
-      Wednesday: 'Wed',
-      Thursday: 'Thu',
-      Friday: 'Fri',
-      Saturday: 'Sat',
-      Sunday: 'Sun'
-    },
-    hu: {
-      hétfő: 'hét',
-      kedd: 'kedd',
-      szerda: 'sze',
-      csütörtök: 'csüt',
-      péntek: 'pén',
-      szombat: 'szo',
-      vasárnap: 'vas'
-    }
-  };
 
   const convertDateFormatQuasarToDateFns = (quasarFormat:string) => {
     const FORMAT_MAP = <Record<string, string>>{
@@ -288,20 +259,19 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
   };
 
 
-  const correctLocale = () => { //TODO:this function cannot be removed , its using lokalize from date-fns for timeago and other
-    const localeCode = config?.localeCode
+  const dateFnsLocale = () => { //TODO:this function cannot be removed , its using lokalize from date-fns for timeago and other
     if (!localeCode) {
       throw new Error('Missing locale code')
     }
     switch (localeCode) {
-      case 'pl_PL.utf8':
-        return {localeCode:pl,lang:'pl'}
-      case 'hu_HU.utf8':
-        return {localeCode:hu,lang:'hu'}
-      case 'en_GB.utf8':
-        return {localeCode:enGB,lang:'en'}
+      case 'pl-PL':
+        return {locale:pl}
+      case 'hu-HU':
+        return {locale:hu}
+      case 'en-GB':
+        return {locale:enGB}
       default:
-        return {localeCode:enGB,lang:'en'}
+        return {locale:enGB}
     }
   }
 
@@ -387,18 +357,18 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
     return sub(dateString, options)
   }
 
-  const getDayAndTime = (dateString: string | Date, shortCutDay:boolean = false) => {
+  const getDayAndTime = (dateString: string | Date, options:{shortCutDay?: boolean, timeWithSeconds?: boolean} = {}) => {
     const date = parseDateWithoutTimezone(dateString);
 
-    const localize = correctLocale();
-
+    const localize = dateFnsLocale();
+    
     const result = {
-      day: format(date, "EEEE", {locale: localize.localeCode}),
-      time: format(date, "HH:mm", {locale: localize.localeCode})
+      day: format(date, "EEEE", {locale: localize.locale}),
+      time: format(date, options.timeWithSeconds ? "HH:mm:ss" : "HH:mm", {locale: localize.locale})
     };
 
-    if (shortCutDay) {
-      result.day = dayShortcuts[localize.lang as keyof typeof dayShortcuts][result.day];
+    if (options.shortCutDay) {
+      result.day = date.toLocaleDateString(localeCode, { weekday: 'short' });
     }
 
     return result;
@@ -410,7 +380,7 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
     return formatDistance(
       baseDate,
       currentDate,
-      { addSuffix: true, locale: correctLocale().localeCode, ...options }
+      { addSuffix: true, locale: dateFnsLocale().locale, ...options }
     )
   }
 
@@ -487,7 +457,7 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
     typeOptions,
     relativeDateOptions,
     getDayAndTime,
-    correctLocale,
+    dateFnsLocale,
     addToDate,
     convertDateFormatQuasarToDateFns,
     convertDateFormatDateFnsToQuasar,
