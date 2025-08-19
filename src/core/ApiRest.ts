@@ -44,6 +44,12 @@ export interface RestApiResponseInterface<T = any> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   meta: ResponseMeta<any>;
 }
+export interface IRequestParamsCollection extends JsonObject{
+  groups?: string[]
+  filterBy?: JsonObject[]
+  search?: string
+}
+export type IRequestParamsOne = Pick<IRequestParamsCollection, 'groups'>
 export type TRestApiOptionsOverride = Partial<Pick<IAptvisionApiRestConfig,
   'apiUrl'|
   'responseType'|
@@ -157,7 +163,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
     }
     return json as JsonObject
   }
-  const getUrl = (endpoint: string, configOverride?: TRestApiOptionsOverride) => {
+  const getUrl = (endpoint: string, params?: IRequestParamsCollection, configOverride?: TRestApiOptionsOverride) => {
     const conf = Object.assign({}, config, configOverride || {})
     let apiUrlCopy = apiUrl
     if (conf.prefixRoutesWithApiVersion) {
@@ -178,30 +184,39 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
       }
       apiUrlCopy += '/users/' + conf.userId
     }
-    return apiUrlCopy + '/' + endpoint.replace(/^\//, '')
+    apiUrlCopy += '/' + endpoint.replace(/^\//, '')
+    if (params) {
+      if (Object.hasOwn(params, 'filterBy') && (!params.filterBy || !params.filterBy.length)) {
+        delete params.filterBy
+      }
+      if (Object.hasOwn(params, 'orderBy') && (!params.orderBy || !Object.values(params.orderBy).length)) {
+        delete params.orderBy
+      }
+      if (Object.hasOwn(params, 'groups') && (!params.groups || !params.groups.length)) {
+        delete params.groups
+      }
+      if (Object.hasOwn(params, 'search') && !params.search) {
+        delete params.search
+      }
+      const allowedKeys = ['groups', 'filterBy', 'orderBy', 'search'];
+
+      params = Object.fromEntries(
+        Object.entries(params).filter(([key]) => allowedKeys.includes(key))
+      );
+      const paramsEncoded = toUrlEncoded(params)
+      if (paramsEncoded) {
+        apiUrlCopy += `?${paramsEncoded}`
+      }
+    }
+    return apiUrlCopy
   }
   const get = (
     endpoint: string,
-    params?: JsonObject,
+    params?: IRequestParamsCollection,
     configOverride?: TRestApiOptionsOverride
   ): Promise<JsonObject> => new Promise((resolve, reject) => {
-    let url = getUrl(endpoint, configOverride)
-    if (params && typeof params === 'object') {
-      for (const key in params) {
-        if (
-          typeof params[key] === 'undefined' ||
-          (['filterBy', 'orderBy'].includes(key) && !Object.keys(params[key] || {}).length) ||
-          (key === 'groups' && Array.isArray(params[key]) && !params[key].length) ||
-          (key === 'search' && params[key] === '')
-        ) {
-          delete params[key]
-        }
-      }
-      const paramsEncoded = toUrlEncoded(params)
-      if (paramsEncoded) {
-        url += `?${paramsEncoded}`
-      }
-    }
+    const url = getUrl(endpoint, params, configOverride)
+
     const abortController = configOverride?.abortController || new AbortController()
     let resp: Response|undefined
     fetch(url, {
@@ -221,10 +236,10 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
   })
   const download = (
     endpoint: string,
-    params?: JsonObject,
+    params?: IRequestParamsOne,
     configOverride?: TRestApiOptionsOverride
   ): Promise<Blob> => new Promise((resolve, reject) => {
-    let url = getUrl(endpoint, configOverride)
+    let url = getUrl(endpoint, params, configOverride)
     if (params && typeof params === 'object') {
       const paramsEncoded = toUrlEncoded(params)
       if (paramsEncoded) {
@@ -248,9 +263,9 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
         reject(config.errorHandler ? config.errorHandler(error, resp) : error)
       })
   })
-  const post = (endpoint: string, data: JsonObject|undefined, configOverride: TRestApiOptionsOverride) => {
+  const post = (endpoint: string, data: JsonObject|undefined, params: IRequestParamsOne, configOverride: TRestApiOptionsOverride) => {
     return new Promise<RestApiResponseInterface>((resolve, reject) => {
-      const url = getUrl(endpoint, configOverride)
+      const url = getUrl(endpoint, params, configOverride)
       const abortController = configOverride?.abortController || new AbortController()
       let resp: Response|undefined
       if (typeof data !== 'object') {
@@ -273,16 +288,13 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
         })
     })
   }
-  const put = (endpoint: string, data: JsonObject|undefined, id: string, configOverride: TRestApiOptionsOverride) => {
+  const put = (endpoint: string, data: JsonObject|undefined, params: IRequestParamsOne, configOverride: TRestApiOptionsOverride) => {
     return new Promise<JsonObject>((resolve, reject) => {
-      let url = getUrl(endpoint, configOverride)
+      const url = getUrl(endpoint, params, configOverride)
       const abortController = configOverride?.abortController || new AbortController()
       let resp: Response|undefined
       if (typeof data !== 'object') {
         data = {}
-      }
-      if (typeof id !== 'undefined') {
-        url += '/' + id
       }
       fetch(url, {
         method: 'PUT',
@@ -301,17 +313,14 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
         })
     })
   }
-  const patch = (endpoint: string, data: JsonObject|undefined, id: string, configOverride: TRestApiOptionsOverride) => {
+  const patch = (endpoint: string, data: JsonObject|undefined, params: IRequestParamsOne, configOverride: TRestApiOptionsOverride) => {
     return new Promise<JsonObject>((resolve, reject) => {
-      let url = getUrl(endpoint, configOverride)
+      const url = getUrl(endpoint, params, configOverride)
 
       const abortController = configOverride?.abortController || new AbortController()
       let resp: Response|undefined
       if (typeof data !== 'object') {
         data = {}
-      }
-      if (id) {
-        url += '/' + id
       }
       fetch(url, {
         method: 'PATCH',

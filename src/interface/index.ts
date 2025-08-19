@@ -1,5 +1,5 @@
 import { IDateHelpersConfig } from "./DateHelpersInterface";
-import { TRestApiOptionsOverride, ApiErrorInterface, RestApiResponseInterface, ResponseMeta } from '../core/ApiRest'
+import { TRestApiOptionsOverride, ApiErrorInterface, RestApiResponseInterface, ResponseMeta, IRequestParamsCollection, IRequestParamsOne } from '../core/ApiRest'
 import { IAuthToken } from '../core/Auth'
 
 //type JsonObject<T = unknown> = { [Key in string]: T }
@@ -20,4 +20,6 @@ export type {
   TScalar,
   NonEmptyString,
   IAuthToken,
+  IRequestParamsOne,
+  IRequestParamsCollection,
 }
