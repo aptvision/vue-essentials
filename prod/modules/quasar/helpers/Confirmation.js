@@ -15,6 +15,7 @@ export const useConfirmation = () => (config) => {
         title: config.title,
         message: config.message,
         cancel: config.cancel || true,
+        ok: config.ok || true,
         persistent: ((_b = config.options) === null || _b === void 0 ? void 0 : _b.persistent) || true,
         dark: config.dark || Dark.isActive,
         progress: typeof ((_c = config.options) === null || _c === void 0 ? void 0 : _c.timeLimit) === 'number',

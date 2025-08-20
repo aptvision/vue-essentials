@@ -156,6 +156,9 @@ export function useDateHelpers(config) {
         };
         return formatStr.replace(/(yyyy|MMMM|MMM|dd|yy|mm|m|d|HH|H|ii|i|ss|s)/g, (tok) => tokens[tok]);
     };
+    const isoDate = (dateStr) => {
+        return formatLocaleDate(dateStr, 'yyyy-mm-dd HH:ii:ss');
+    };
     const formatDate = ((_a = config === null || config === void 0 ? void 0 : config.userDateFormat) === null || _a === void 0 ? void 0 : _a.date) || getDatePattern();
     const formatDateTime = ((_b = config === null || config === void 0 ? void 0 : config.userDateFormat) === null || _b === void 0 ? void 0 : _b.dateTime) || getDateTimePattern();
     const formatDateTimeSec = ((_c = config === null || config === void 0 ? void 0 : config.userDateFormat) === null || _c === void 0 ? void 0 : _c.dateTimeSec) || getDateTimeSecPattern();
@@ -357,6 +360,7 @@ export function useDateHelpers(config) {
         convertDateFormatDateFnsToQuasar,
         sqlDateTime,
         parseTime,
-        formatLocaleDate
+        formatLocaleDate,
+        isoDate
     };
 }

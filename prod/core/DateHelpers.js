@@ -155,6 +155,9 @@ export function useDateHelpers(config) {
         };
         return formatStr.replace(/(yyyy|MMMM|MMM|dd|yy|mm|m|d|HH|H|ii|i|ss|s)/g, (tok) => tokens[tok]);
     };
+    const isoDate = (dateStr) => {
+        return formatLocaleDate(dateStr, 'yyyy-mm-dd HH:ii:ss');
+    };
     const formatDate = config?.userDateFormat?.date || getDatePattern();
     const formatDateTime = config?.userDateFormat?.dateTime || getDateTimePattern();
     const formatDateTimeSec = config?.userDateFormat?.dateTimeSec || getDateTimeSecPattern();
@@ -356,6 +359,7 @@ export function useDateHelpers(config) {
         convertDateFormatDateFnsToQuasar,
         sqlDateTime,
         parseTime,
-        formatLocaleDate
+        formatLocaleDate,
+        isoDate
     };
 }

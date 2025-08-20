@@ -20,6 +20,7 @@ export interface ConfirmationConfig {
   title: string;
   message: string;
   cancel?: QBtnProps;
+  ok?: QBtnProps;
   dark?: boolean;
   onOk?: () => void | undefined;
   onCancel?: () => void | undefined;
@@ -41,6 +42,7 @@ export const useConfirmation = () => (config: ConfirmationConfig) => {
     title: config.title,
     message: config.message,
     cancel: config.cancel || true,
+    ok: config.ok || true,
     persistent: config.options?.persistent || true,
     dark: config.dark || Dark.isActive,
     progress: typeof config.options?.timeLimit === 'number',

@@ -13,6 +13,7 @@ export interface ConfirmationConfig {
     title: string;
     message: string;
     cancel?: QBtnProps;
+    ok?: QBtnProps;
     dark?: boolean;
     onOk?: () => void | undefined;
     onCancel?: () => void | undefined;
