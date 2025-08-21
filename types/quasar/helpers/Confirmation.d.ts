@@ -21,6 +21,7 @@ export interface ConfirmationConfig {
     update?: JsonObject;
     hide?: JsonObject;
     options?: AdditionalOptionOptions | undefined;
+    html?: boolean;
 }
 export declare const useConfirmation: () => (config: ConfirmationConfig) => void;
 export {};

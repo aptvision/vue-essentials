@@ -18,7 +18,8 @@ export const useConfirmation = () => (config) => {
         persistent: config.options?.persistent || true,
         dark: config.dark || Dark.isActive,
         progress: typeof config.options?.timeLimit === 'number',
-        prompt: config.options?.prompt
+        prompt: config.options?.prompt,
+        html: config.html || false
     };
     const quasarOptions = { options: {} };
     if (config.options?.options && isObject(config.options.options) && !isEmpty(config.options.options)) {
