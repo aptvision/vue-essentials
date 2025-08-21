@@ -28,6 +28,7 @@ export interface ConfirmationConfig {
   update?: JsonObject;
   hide?: JsonObject;
   options?: AdditionalOptionOptions | undefined;
+  html?: boolean;
 }
 
 export const useConfirmation = () => (config: ConfirmationConfig) => {
@@ -46,7 +47,8 @@ export const useConfirmation = () => (config: ConfirmationConfig) => {
     persistent: config.options?.persistent || true,
     dark: config.dark || Dark.isActive,
     progress: typeof config.options?.timeLimit === 'number',
-    prompt: config.options?.prompt
+    prompt: config.options?.prompt,
+    html: config.html || false
   }
   const quasarOptions = { options: {} as QDialogOptions['options'] }
 
