@@ -223,6 +223,10 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
     );
   }
 
+  const isoDate = (dateStr: string) => {
+    return formatLocaleDate(dateStr ,'yyyy-mm-dd HH:ii:ss');
+  }
+
   const formatDate = config?.userDateFormat?.date || getDatePattern()
   const formatDateTime = config?.userDateFormat?.dateTime || getDateTimePattern()
   const formatDateTimeSec = config?.userDateFormat?.dateTimeSec || getDateTimeSecPattern()
@@ -463,6 +467,7 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
     convertDateFormatDateFnsToQuasar,
     sqlDateTime,
     parseTime,
-    formatLocaleDate
+    formatLocaleDate,
+    isoDate
   }
 }
