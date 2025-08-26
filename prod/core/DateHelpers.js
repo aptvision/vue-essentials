@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { format, fromUnixTime, sub, isValid, parseISO, isEqual, startOfDay, formatDistance, parse, add, differenceInYears, differenceInQuarters, differenceInMonths, differenceInWeeks, differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds, differenceInMilliseconds, differenceInCalendarDays, differenceInCalendarWeeks, differenceInCalendarISOWeeks, differenceInCalendarMonths, differenceInCalendarQuarters, differenceInCalendarYears, differenceInBusinessDays, } from 'date-fns';
+import { format, fromUnixTime, sub, isValid, parseISO, isEqual, startOfDay, formatDistance, parse, add, differenceInYears, differenceInQuarters, differenceInMonths, differenceInWeeks, differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds, differenceInMilliseconds, differenceInCalendarDays, differenceInCalendarWeeks, differenceInCalendarISOWeeks, differenceInCalendarMonths, differenceInCalendarQuarters, differenceInCalendarYears, differenceInBusinessDays, startOfMonth, endOfMonth, } from 'date-fns';
 import { pl, hu, enGB } from 'date-fns/locale'; // INFO: hardoced-locale-codes from date fns, you can add another in future
 const intervalFunctionMap = {
     YEARS: differenceInYears,
@@ -314,6 +314,18 @@ export function useDateHelpers(config) {
     const addToDate = (dateString, options) => {
         return add(new Date(dateString), options);
     };
+    const getDateRangeFromMonth = (year, month) => {
+        // Tworzymy datę dla danego roku i miesiąca (month jest 1-based)
+        const date = new Date(year, month - 1, 1);
+        // Używamy date-fns do obliczenia pierwszego i ostatniego dnia miesiąca
+        const startDate = startOfMonth(date);
+        const endDate = endOfMonth(date);
+        // Formatujemy do ISO string (YYYY-MM-DD)
+        return {
+            from: format(startDate, 'yyyy-MM-dd'),
+            to: format(endDate, 'yyyy-MM-dd')
+        };
+    };
     const exportedFormat = () => {
         return {
             js: {
@@ -360,6 +372,7 @@ export function useDateHelpers(config) {
         sqlDateTime,
         parseTime,
         formatLocaleDate,
-        isoDate
+        isoDate,
+        getDateRangeFromMonth
     };
 }
