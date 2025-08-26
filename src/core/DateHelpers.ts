@@ -26,6 +26,8 @@ import {
   differenceInCalendarQuarters,
   differenceInCalendarYears,
   differenceInBusinessDays,
+  startOfMonth,
+  endOfMonth,
 } from 'date-fns'
 import { pl, hu, enGB } from 'date-fns/locale' // INFO: hardoced-locale-codes from date fns, you can add another in future
 import { IDateHelpersConfig, IExportedDateFormat, IUseDateHelpersReturn, TDateDiffInterval } from '../interface/DateHelpersInterface'
@@ -420,6 +422,17 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
     return add(new Date(dateString), options)
   }
 
+  const getDateRangeFromMonth = (year: number, month: number): { from: string, to: string } => {
+    const date = new Date(year, month - 1, 1)
+    const startDate = startOfMonth(date)
+    const endDate = endOfMonth(date)
+    
+    return {
+      from: format(startDate, 'yyyy-MM-dd'),
+      to: format(endDate, 'yyyy-MM-dd')
+    }
+  }
+
   const exportedFormat = ():IExportedDateFormat => {
     return {
       js:{
@@ -468,6 +481,7 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
     sqlDateTime,
     parseTime,
     formatLocaleDate,
-    isoDate
+    isoDate,
+    getDateRangeFromMonth
   }
 }
