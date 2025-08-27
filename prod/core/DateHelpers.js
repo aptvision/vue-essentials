@@ -314,17 +314,23 @@ export function useDateHelpers(config) {
     const addToDate = (dateString, options) => {
         return add(new Date(dateString), options);
     };
-    const getDateRangeFromMonth = (year, month) => {
-        // Tworzymy datę dla danego roku i miesiąca (month jest 1-based)
-        const date = new Date(year, month - 1, 1);
-        // Używamy date-fns do obliczenia pierwszego i ostatniego dnia miesiąca
-        const startDate = startOfMonth(date);
-        const endDate = endOfMonth(date);
-        // Formatujemy do ISO string (YYYY-MM-DD)
-        return {
+    const getMonthDateRangeFromDate = (date, options = {}) => {
+        const inputDate = new Date(date);
+        const startDate = startOfMonth(inputDate);
+        const endDate = endOfMonth(inputDate);
+        const result = {
             from: format(startDate, 'yyyy-MM-dd'),
             to: format(endDate, 'yyyy-MM-dd')
         };
+        if (options.monthName) {
+            let monthName = new Intl.DateTimeFormat(localeCode, { month: "long" }).format(inputDate);
+            if (options.year) {
+                const year = inputDate.getFullYear();
+                monthName = `${year} ${monthName} `;
+            }
+            result.monthName = monthName;
+        }
+        return result;
     };
     const exportedFormat = () => {
         return {
@@ -373,6 +379,6 @@ export function useDateHelpers(config) {
         parseTime,
         formatLocaleDate,
         isoDate,
-        getDateRangeFromMonth
+        getMonthDateRangeFromDate
     };
 }
