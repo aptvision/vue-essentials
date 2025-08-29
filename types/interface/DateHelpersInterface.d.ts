@@ -69,7 +69,7 @@ export interface IUseDateHelpersReturn {
     }): {
         from: string;
         to: string;
-        monthName?: string;
+        title?: string;
     };
 }
 export type TDateDiffInterval = 'YEARS' | 'QUARTERS' | 'MONTHS' | 'WEEKS' | 'DAYS' | 'HOURS' | 'MINUTES' | 'SECONDS' | 'MILLISECONDS' | 'CALENDAR_DAYS' | 'CALENDAR_WEEKS' | 'CALENDAR_ISO_WEEKS' | 'CALENDAR_MONTHS' | 'CALENDAR_QUARTERS' | 'CALENDAR_YEARS' | 'BUSINESS_DAYS';

@@ -327,9 +327,9 @@ export function useDateHelpers(config) {
             let monthName = new Intl.DateTimeFormat(localeCode, { month: "long" }).format(inputDate);
             if (options.year) {
                 const year = inputDate.getFullYear();
-                monthName = `${year} ${monthName} `;
+                monthName = `${monthName} ${year}`;
             }
-            result.monthName = monthName;
+            result.title = monthName;
         }
         return result;
     };
