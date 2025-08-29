@@ -422,13 +422,13 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
     return add(new Date(dateString), options)
   }
 
-  const getMonthDateRangeFromDate = (date: string | Date, options:{monthName?: boolean, year?: boolean} = {}): { from: string, to: string, monthName?: string } => {
+  const getMonthDateRangeFromDate = (date: string | Date, options:{monthName?: boolean, year?: boolean} = {}): { from: string, to: string, title?: string } => {
     const inputDate = new Date(date)
     
     const startDate = startOfMonth(inputDate)
     const endDate = endOfMonth(inputDate)
     
-    const result: { from: string, to: string, monthName?: string } = {
+    const result: { from: string, to: string, title?: string } = {
       from: format(startDate, 'yyyy-MM-dd'),
       to: format(endDate, 'yyyy-MM-dd')
     }
@@ -438,10 +438,10 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
       
       if (options.year) {
         const year = inputDate.getFullYear()
-        monthName = `${year} ${monthName} `
+        monthName = `${monthName} ${year}`
       }
       
-      result.monthName = monthName
+      result.title = monthName
     }
     
     return result
