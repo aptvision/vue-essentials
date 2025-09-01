@@ -422,15 +422,29 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
     return add(new Date(dateString), options)
   }
 
-  const getDateRangeFromMonth = (year: number, month: number): { from: string, to: string } => {
-    const date = new Date(year, month - 1, 1)
-    const startDate = startOfMonth(date)
-    const endDate = endOfMonth(date)
+  const getMonthDateRangeFromDate = (date: string | Date, options:{monthName?: boolean, year?: boolean} = {}): { from: string, to: string, title?: string } => {
+    const inputDate = new Date(date)
     
-    return {
+    const startDate = startOfMonth(inputDate)
+    const endDate = endOfMonth(inputDate)
+    
+    const result: { from: string, to: string, title?: string } = {
       from: format(startDate, 'yyyy-MM-dd'),
       to: format(endDate, 'yyyy-MM-dd')
     }
+    
+    if (options.monthName) {
+      let monthName = new Intl.DateTimeFormat(localeCode, { month: "long" }).format(inputDate)
+      
+      if (options.year) {
+        const year = inputDate.getFullYear()
+        monthName = `${monthName} ${year}`
+      }
+      
+      result.title = monthName
+    }
+    
+    return result
   }
 
   const exportedFormat = ():IExportedDateFormat => {
@@ -482,6 +496,6 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
     parseTime,
     formatLocaleDate,
     isoDate,
-    getDateRangeFromMonth
+    getMonthDateRangeFromDate
   }
 }
