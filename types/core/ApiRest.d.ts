@@ -45,16 +45,22 @@ export interface RestApiResponseInterface<T = any> {
     data: T;
     meta: ResponseMeta<any>;
 }
+export interface IRequestParamsCollection extends JsonObject {
+    groups?: string[];
+    filterBy?: JsonObject[];
+    search?: string;
+}
+export type IRequestParamsOne = Pick<IRequestParamsCollection, 'groups'>;
 export type TRestApiOptionsOverride = Partial<Pick<IAptvisionApiRestConfig, 'apiUrl' | 'responseType' | 'prefixRoutesWithUserId' | 'prefixRoutesWithApiVersion' | 'prefixRoutesWithOrganizationId' | 'includeOrganizationIdHeader'>> & {
     abortController?: AbortController;
 };
 export declare const useApiRest: (config: IAptvisionApiRestConfig) => {
-    get: (endpoint: string, params?: JsonObject, configOverride?: TRestApiOptionsOverride) => Promise<JsonObject>;
-    post: (endpoint: string, data: JsonObject | undefined, configOverride: TRestApiOptionsOverride) => Promise<RestApiResponseInterface<any>>;
-    put: (endpoint: string, data: JsonObject | undefined, id: string, configOverride: TRestApiOptionsOverride) => Promise<JsonObject>;
-    patch: (endpoint: string, data: JsonObject | undefined, id: string, configOverride: TRestApiOptionsOverride) => Promise<JsonObject>;
+    get: (endpoint: string, params?: IRequestParamsCollection, configOverride?: TRestApiOptionsOverride) => Promise<JsonObject>;
+    post: (endpoint: string, data: JsonObject | undefined, params: IRequestParamsOne, configOverride: TRestApiOptionsOverride) => Promise<RestApiResponseInterface<any>>;
+    put: (endpoint: string, data: JsonObject | undefined, params: IRequestParamsOne, configOverride: TRestApiOptionsOverride) => Promise<JsonObject>;
+    patch: (endpoint: string, data: JsonObject | undefined, params: IRequestParamsOne, configOverride: TRestApiOptionsOverride) => Promise<JsonObject>;
     remove: (endpoint: string, configOverride: TRestApiOptionsOverride) => Promise<JsonObject>;
     poll: (endpoint: string, params: JsonObject, intervalSec: number, configOverride: TRestApiOptionsOverride) => void;
     pollCancel: (endpoint: string) => void;
-    download: (endpoint: string, params?: JsonObject, configOverride?: TRestApiOptionsOverride) => Promise<Blob>;
+    download: (endpoint: string, params?: IRequestParamsOne, configOverride?: TRestApiOptionsOverride) => Promise<Blob>;
 };
