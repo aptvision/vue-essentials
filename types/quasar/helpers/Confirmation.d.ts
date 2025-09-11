@@ -13,6 +13,7 @@ export interface ConfirmationConfig {
     title: string;
     message: string;
     cancel?: QBtnProps;
+    ok?: QBtnProps;
     dark?: boolean;
     onOk?: () => void | undefined;
     onCancel?: () => void | undefined;
@@ -20,6 +21,7 @@ export interface ConfirmationConfig {
     update?: JsonObject;
     hide?: JsonObject;
     options?: AdditionalOptionOptions | undefined;
+    html?: boolean;
 }
 export declare const useConfirmation: () => (config: ConfirmationConfig) => void;
 export {};

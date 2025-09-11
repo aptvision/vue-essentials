@@ -26,6 +26,8 @@ import {
   differenceInCalendarQuarters,
   differenceInCalendarYears,
   differenceInBusinessDays,
+  startOfMonth,
+  endOfMonth,
 } from 'date-fns'
 import { pl, hu, enGB } from 'date-fns/locale' // INFO: hardoced-locale-codes from date fns, you can add another in future
 import { IDateHelpersConfig, IExportedDateFormat, IUseDateHelpersReturn, TDateDiffInterval } from '../interface/DateHelpersInterface'
@@ -223,6 +225,10 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
     );
   }
 
+  const isoDate = (dateStr: string) => {
+    return formatLocaleDate(dateStr ,'yyyy-mm-dd HH:ii:ss');
+  }
+
   const formatDate = config?.userDateFormat?.date || getDatePattern()
   const formatDateTime = config?.userDateFormat?.dateTime || getDateTimePattern()
   const formatDateTimeSec = config?.userDateFormat?.dateTimeSec || getDateTimeSecPattern()
@@ -416,6 +422,31 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
     return add(new Date(dateString), options)
   }
 
+  const getMonthDateRangeFromDate = (date: string | Date, options:{monthName?: boolean, year?: boolean} = {}): { from: string, to: string, title?: string } => {
+    const inputDate = new Date(date)
+    
+    const startDate = startOfMonth(inputDate)
+    const endDate = endOfMonth(inputDate)
+    
+    const result: { from: string, to: string, title?: string } = {
+      from: format(startDate, 'yyyy-MM-dd'),
+      to: format(endDate, 'yyyy-MM-dd')
+    }
+    
+    if (options.monthName) {
+      let monthName = new Intl.DateTimeFormat(localeCode, { month: "long" }).format(inputDate)
+      
+      if (options.year) {
+        const year = inputDate.getFullYear()
+        monthName = `${monthName} ${year}`
+      }
+      
+      result.title = monthName
+    }
+    
+    return result
+  }
+
   const exportedFormat = ():IExportedDateFormat => {
     return {
       js:{
@@ -463,6 +494,8 @@ export function useDateHelpers (config?:IDateHelpersConfig):IUseDateHelpersRetur
     convertDateFormatDateFnsToQuasar,
     sqlDateTime,
     parseTime,
-    formatLocaleDate
+    formatLocaleDate,
+    isoDate,
+    getMonthDateRangeFromDate
   }
 }

@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { format, fromUnixTime, sub, isValid, parseISO, isEqual, startOfDay, formatDistance, parse, add, differenceInYears, differenceInQuarters, differenceInMonths, differenceInWeeks, differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds, differenceInMilliseconds, differenceInCalendarDays, differenceInCalendarWeeks, differenceInCalendarISOWeeks, differenceInCalendarMonths, differenceInCalendarQuarters, differenceInCalendarYears, differenceInBusinessDays, } from 'date-fns';
+import { format, fromUnixTime, sub, isValid, parseISO, isEqual, startOfDay, formatDistance, parse, add, differenceInYears, differenceInQuarters, differenceInMonths, differenceInWeeks, differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds, differenceInMilliseconds, differenceInCalendarDays, differenceInCalendarWeeks, differenceInCalendarISOWeeks, differenceInCalendarMonths, differenceInCalendarQuarters, differenceInCalendarYears, differenceInBusinessDays, startOfMonth, endOfMonth, } from 'date-fns';
 import { pl, hu, enGB } from 'date-fns/locale'; // INFO: hardoced-locale-codes from date fns, you can add another in future
 const intervalFunctionMap = {
     YEARS: differenceInYears,
@@ -155,6 +155,9 @@ export function useDateHelpers(config) {
             s: String(secNum),
         };
         return formatStr.replace(/(yyyy|MMMM|MMM|dd|yy|mm|m|d|HH|H|ii|i|ss|s)/g, (tok) => tokens[tok]);
+    };
+    const isoDate = (dateStr) => {
+        return formatLocaleDate(dateStr, 'yyyy-mm-dd HH:ii:ss');
     };
     const formatDate = ((_a = config === null || config === void 0 ? void 0 : config.userDateFormat) === null || _a === void 0 ? void 0 : _a.date) || getDatePattern();
     const formatDateTime = ((_b = config === null || config === void 0 ? void 0 : config.userDateFormat) === null || _b === void 0 ? void 0 : _b.dateTime) || getDateTimePattern();
@@ -312,6 +315,24 @@ export function useDateHelpers(config) {
     const addToDate = (dateString, options) => {
         return add(new Date(dateString), options);
     };
+    const getMonthDateRangeFromDate = (date, options = {}) => {
+        const inputDate = new Date(date);
+        const startDate = startOfMonth(inputDate);
+        const endDate = endOfMonth(inputDate);
+        const result = {
+            from: format(startDate, 'yyyy-MM-dd'),
+            to: format(endDate, 'yyyy-MM-dd')
+        };
+        if (options.monthName) {
+            let monthName = new Intl.DateTimeFormat(localeCode, { month: "long" }).format(inputDate);
+            if (options.year) {
+                const year = inputDate.getFullYear();
+                monthName = `${monthName} ${year}`;
+            }
+            result.title = monthName;
+        }
+        return result;
+    };
     const exportedFormat = () => {
         return {
             js: {
@@ -357,6 +378,8 @@ export function useDateHelpers(config) {
         convertDateFormatDateFnsToQuasar,
         sqlDateTime,
         parseTime,
-        formatLocaleDate
+        formatLocaleDate,
+        isoDate,
+        getMonthDateRangeFromDate
     };
 }

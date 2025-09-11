@@ -15,10 +15,12 @@ export const useConfirmation = () => (config) => {
         title: config.title,
         message: config.message,
         cancel: config.cancel || true,
+        ok: config.ok || true,
         persistent: ((_b = config.options) === null || _b === void 0 ? void 0 : _b.persistent) || true,
         dark: config.dark || Dark.isActive,
         progress: typeof ((_c = config.options) === null || _c === void 0 ? void 0 : _c.timeLimit) === 'number',
-        prompt: (_d = config.options) === null || _d === void 0 ? void 0 : _d.prompt
+        prompt: (_d = config.options) === null || _d === void 0 ? void 0 : _d.prompt,
+        html: config.html || false
     };
     const quasarOptions = { options: {} };
     if (((_e = config.options) === null || _e === void 0 ? void 0 : _e.options) && isObject(config.options.options) && !isEmpty(config.options.options)) {

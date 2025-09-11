@@ -20,6 +20,7 @@ export interface ConfirmationConfig {
   title: string;
   message: string;
   cancel?: QBtnProps;
+  ok?: QBtnProps;
   dark?: boolean;
   onOk?: () => void | undefined;
   onCancel?: () => void | undefined;
@@ -27,6 +28,7 @@ export interface ConfirmationConfig {
   update?: JsonObject;
   hide?: JsonObject;
   options?: AdditionalOptionOptions | undefined;
+  html?: boolean;
 }
 
 export const useConfirmation = () => (config: ConfirmationConfig) => {
@@ -41,10 +43,12 @@ export const useConfirmation = () => (config: ConfirmationConfig) => {
     title: config.title,
     message: config.message,
     cancel: config.cancel || true,
+    ok: config.ok || true,
     persistent: config.options?.persistent || true,
     dark: config.dark || Dark.isActive,
     progress: typeof config.options?.timeLimit === 'number',
-    prompt: config.options?.prompt
+    prompt: config.options?.prompt,
+    html: config.html || false
   }
   const quasarOptions = { options: {} as QDialogOptions['options'] }
 
