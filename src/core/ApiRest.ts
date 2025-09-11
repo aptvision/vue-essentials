@@ -186,16 +186,16 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
     }
     apiUrlCopy += '/' + endpoint.replace(/^\//, '')
     if (params) {
-      if (Object.hasOwn(params, 'filterBy') && (!params.filterBy || !params.filterBy.length)) {
+      if (Object.prototype.hasOwnProperty.call(params, 'filterBy') && (!params.filterBy || !params.filterBy.length)) {
         delete params.filterBy
       }
-      if (Object.hasOwn(params, 'orderBy') && (!params.orderBy || !Object.values(params.orderBy).length)) {
+      if (Object.prototype.hasOwnProperty.call(params, 'orderBy') && (!params.orderBy || !Object.values(params.orderBy).length)) {
         delete params.orderBy
       }
-      if (Object.hasOwn(params, 'groups') && (!params.groups || !params.groups.length)) {
+      if (Object.prototype.hasOwnProperty.call(params, 'groups') && (!params.groups || !params.groups.length)) {
         delete params.groups
       }
-      if (Object.hasOwn(params, 'search') && !params.search) {
+      if (Object.prototype.hasOwnProperty.call(params, 'search') && !params.search) {
         delete params.search
       }
       const paramsEncoded = toUrlEncoded(params)

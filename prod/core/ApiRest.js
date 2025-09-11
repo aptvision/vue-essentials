@@ -106,7 +106,7 @@ export const useApiRest = (config) => {
         }
         return json;
     };
-    const getUrl = (endpoint, configOverride) => {
+    const getUrl = (endpoint, params, configOverride) => {
         const conf = Object.assign({}, config, configOverride || {});
         let apiUrlCopy = apiUrl;
         if (conf.prefixRoutesWithApiVersion) {
@@ -127,24 +127,29 @@ export const useApiRest = (config) => {
             }
             apiUrlCopy += '/users/' + conf.userId;
         }
-        return apiUrlCopy + '/' + endpoint.replace(/^\//, '');
-    };
-    const get = (endpoint, params, configOverride) => new Promise((resolve, reject) => {
-        let url = getUrl(endpoint, configOverride);
-        if (params && typeof params === 'object') {
-            for (const key in params) {
-                if (typeof params[key] === 'undefined' ||
-                    (['filterBy', 'orderBy'].includes(key) && !Object.keys(params[key] || {}).length) ||
-                    (key === 'groups' && Array.isArray(params[key]) && !params[key].length) ||
-                    (key === 'search' && params[key] === '')) {
-                    delete params[key];
-                }
+        apiUrlCopy += '/' + endpoint.replace(/^\//, '');
+        if (params) {
+            if (Object.prototype.hasOwnProperty.call(params, 'filterBy') && (!params.filterBy || !params.filterBy.length)) {
+                delete params.filterBy;
+            }
+            if (Object.prototype.hasOwnProperty.call(params, 'orderBy') && (!params.orderBy || !Object.values(params.orderBy).length)) {
+                delete params.orderBy;
+            }
+            if (Object.prototype.hasOwnProperty.call(params, 'groups') && (!params.groups || !params.groups.length)) {
+                delete params.groups;
+            }
+            if (Object.prototype.hasOwnProperty.call(params, 'search') && !params.search) {
+                delete params.search;
             }
             const paramsEncoded = toUrlEncoded(params);
             if (paramsEncoded) {
-                url += `?${paramsEncoded}`;
+                apiUrlCopy += `?${paramsEncoded}`;
             }
         }
+        return apiUrlCopy;
+    };
+    const get = (endpoint, params, configOverride) => new Promise((resolve, reject) => {
+        const url = getUrl(endpoint, params, configOverride);
         const abortController = configOverride?.abortController || new AbortController();
         let resp;
         fetch(url, {
@@ -163,7 +168,7 @@ export const useApiRest = (config) => {
         });
     });
     const download = (endpoint, params, configOverride) => new Promise((resolve, reject) => {
-        let url = getUrl(endpoint, configOverride);
+        let url = getUrl(endpoint, params, configOverride);
         if (params && typeof params === 'object') {
             const paramsEncoded = toUrlEncoded(params);
             if (paramsEncoded) {
@@ -187,9 +192,9 @@ export const useApiRest = (config) => {
             reject(config.errorHandler ? config.errorHandler(error, resp) : error);
         });
     });
-    const post = (endpoint, data, configOverride) => {
+    const post = (endpoint, data, params, configOverride) => {
         return new Promise((resolve, reject) => {
-            const url = getUrl(endpoint, configOverride);
+            const url = getUrl(endpoint, params, configOverride);
             const abortController = configOverride?.abortController || new AbortController();
             let resp;
             if (typeof data !== 'object') {
@@ -212,16 +217,13 @@ export const useApiRest = (config) => {
             });
         });
     };
-    const put = (endpoint, data, id, configOverride) => {
+    const put = (endpoint, data, params, configOverride) => {
         return new Promise((resolve, reject) => {
-            let url = getUrl(endpoint, configOverride);
+            const url = getUrl(endpoint, params, configOverride);
             const abortController = configOverride?.abortController || new AbortController();
             let resp;
             if (typeof data !== 'object') {
                 data = {};
-            }
-            if (typeof id !== 'undefined') {
-                url += '/' + id;
             }
             fetch(url, {
                 method: 'PUT',
@@ -240,16 +242,13 @@ export const useApiRest = (config) => {
             });
         });
     };
-    const patch = (endpoint, data, id, configOverride) => {
+    const patch = (endpoint, data, params, configOverride) => {
         return new Promise((resolve, reject) => {
-            let url = getUrl(endpoint, configOverride);
+            const url = getUrl(endpoint, params, configOverride);
             const abortController = configOverride?.abortController || new AbortController();
             let resp;
             if (typeof data !== 'object') {
                 data = {};
-            }
-            if (id) {
-                url += '/' + id;
             }
             fetch(url, {
                 method: 'PATCH',

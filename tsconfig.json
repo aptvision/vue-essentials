@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
-      "target": "ESNext",
+      "target": "es2022",
+      "lib": ["es2022", "dom"],
       "strict": true,
       "outDir": "./prod",
       "esModuleInterop": true,
@@ -8,7 +9,7 @@
       "moduleResolution": "Node",
       "skipLibCheck": true,
       "rootDir": "./src",
-      "types": ["vitest/globals"]
+      "types": ["vitest/globals"],
     },
     "ts-node": {
         "esm": true,
