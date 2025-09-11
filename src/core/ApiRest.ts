@@ -198,11 +198,6 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
       if (Object.hasOwn(params, 'search') && !params.search) {
         delete params.search
       }
-      const allowedKeys = ['groups', 'filterBy', 'orderBy', 'search'];
-
-      params = Object.fromEntries(
-        Object.entries(params).filter(([key]) => allowedKeys.includes(key))
-      );
       const paramsEncoded = toUrlEncoded(params)
       if (paramsEncoded) {
         apiUrlCopy += `?${paramsEncoded}`
