@@ -58,6 +58,7 @@ export interface IUseDateHelpersReturn {
   dateDiff(interval: TDateDiffInterval, date1: string | Date, date2: string | Date): number
   isoDate(dateString: string): string
   getMonthDateRangeFromDate(date: string | Date, options?: {monthName?: boolean, year?: boolean}): { from: string, to: string, title?: string }
+  getDaysOfWeek(startDay?: number): Array<{ dayNumber: number; shortName: string; longName: string }>
 }
 
 export type TDateDiffInterval =
