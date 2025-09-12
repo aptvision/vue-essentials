@@ -332,6 +332,23 @@ export function useDateHelpers(config) {
         }
         return result;
     };
+    const getDaysOfWeek = (startDay = 0) => {
+        const days = [];
+        for (let i = 0; i < 7; i++) {
+            const dayNumber = (startDay + i) % 7;
+            const baseDate = new Date(2024, 0, 7); // January 7, 2024 (Sunday)
+            const dayDate = new Date(baseDate);
+            dayDate.setDate(baseDate.getDate() + dayNumber);
+            const shortName = new Intl.DateTimeFormat(localeCode, { weekday: 'short' }).format(dayDate);
+            const longName = new Intl.DateTimeFormat(localeCode, { weekday: 'long' }).format(dayDate);
+            days.push({
+                dayNumber,
+                shortName,
+                longName
+            });
+        }
+        return days;
+    };
     const exportedFormat = () => {
         return {
             js: {
@@ -379,6 +396,7 @@ export function useDateHelpers(config) {
         parseTime,
         formatLocaleDate,
         isoDate,
-        getMonthDateRangeFromDate
+        getMonthDateRangeFromDate,
+        getDaysOfWeek
     };
 }
