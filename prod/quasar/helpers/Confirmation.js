@@ -30,8 +30,8 @@ export const useConfirmation = () => (config) => {
         throw new Error('Quasar Dialog plugin needs to be enabled in the quasar.conf.js file in your local project');
     }
     const dialog = Dialog.create(dialogOptions)
-        .onOk(() => {
-        config.onOk?.();
+        .onOk((data) => {
+        config.onOk?.(data);
     }).onCancel(() => {
         config.onCancel?.();
     }).onDismiss(() => {
@@ -45,4 +45,5 @@ export const useConfirmation = () => (config) => {
             });
         }, timeLimit * 1000);
     }
+    return dialog;
 };
