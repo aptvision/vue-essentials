@@ -15,7 +15,7 @@ export interface ConfirmationConfig {
     cancel?: QBtnProps;
     ok?: QBtnProps;
     dark?: boolean;
-    onOk?: () => void | undefined;
+    onOk?: (data?: unknown) => void | undefined;
     onCancel?: () => void | undefined;
     onDismiss?: () => void | undefined;
     update?: JsonObject;
@@ -23,5 +23,5 @@ export interface ConfirmationConfig {
     options?: AdditionalOptionOptions | undefined;
     html?: boolean;
 }
-export declare const useConfirmation: () => (config: ConfirmationConfig) => void;
+export declare const useConfirmation: () => (config: ConfirmationConfig) => import("quasar").DialogChainObject;
 export {};

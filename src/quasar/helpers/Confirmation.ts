@@ -22,7 +22,7 @@ export interface ConfirmationConfig {
   cancel?: QBtnProps;
   ok?: QBtnProps;
   dark?: boolean;
-  onOk?: () => void | undefined;
+  onOk?: (data?: unknown) => void | undefined;
   onCancel?: () => void | undefined;
   onDismiss?: () => void | undefined;
   update?: JsonObject;
@@ -59,9 +59,11 @@ export const useConfirmation = () => (config: ConfirmationConfig) => {
   if (!Dialog.create) {
     throw new Error('Quasar Dialog plugin needs to be enabled in the quasar.conf.js file in your local project')
   }
+  
+  
   const dialog = Dialog.create(dialogOptions)
-    .onOk(() => {
-      config.onOk?.()
+    .onOk((data) => {
+      config.onOk?.(data)
     }).onCancel(() => {
       config.onCancel?.()
     }).onDismiss(() => {
@@ -76,4 +78,6 @@ export const useConfirmation = () => (config: ConfirmationConfig) => {
       })
     }, timeLimit * 1000)
   }
+  
+  return dialog
 }
