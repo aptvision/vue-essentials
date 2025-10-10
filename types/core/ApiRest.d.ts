@@ -63,4 +63,5 @@ export declare const useApiRest: (config: IAptvisionApiRestConfig) => {
     poll: (endpoint: string, params: JsonObject, intervalSec: number, configOverride: TRestApiOptionsOverride) => void;
     pollCancel: (endpoint: string) => void;
     download: (endpoint: string, params?: IRequestParamsOne, configOverride?: TRestApiOptionsOverride) => Promise<Blob>;
+    upload: (endpoint: string, formData: FormData, params?: IRequestParamsOne, configOverride?: TRestApiOptionsOverride) => Promise<RestApiResponseInterface<any>>;
 };
