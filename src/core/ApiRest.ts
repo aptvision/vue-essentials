@@ -284,6 +284,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
     })
   }
   const upload = (endpoint: string, formData: FormData, params?: IRequestParamsOne, configOverride?: TRestApiOptionsOverride) => {
+    console.log("🚀 ~ upload ~ endpoint:", endpoint)
     return new Promise<RestApiResponseInterface>((resolve, reject) => {
       const url = getUrl(endpoint, params, configOverride)
       const abortController = configOverride?.abortController || new AbortController()
