@@ -218,6 +218,30 @@ export const useApiRest = (config) => {
             });
         });
     };
+    const upload = (endpoint, formData, params, configOverride) => {
+        return new Promise((resolve, reject) => {
+            const url = getUrl(endpoint, params, configOverride);
+            const abortController = (configOverride === null || configOverride === void 0 ? void 0 : configOverride.abortController) || new AbortController();
+            let resp;
+            // Don't set Content-Type header - let browser set it with boundary for multipart/form-data
+            const headers = getHeaders(configOverride);
+            fetch(url, {
+                method: 'POST',
+                signal: abortController.signal,
+                headers: headers,
+                body: formData
+            })
+                .then(response => {
+                resp = response;
+                handleResponse(response, configOverride);
+                return responseToJson(response);
+            })
+                .then(result => resolve(result))
+                .catch((error) => {
+                reject(config.errorHandler ? config.errorHandler(error, resp) : error);
+            });
+        });
+    };
     const put = (endpoint, data, params, configOverride) => {
         return new Promise((resolve, reject) => {
             var _a, _b;
@@ -342,6 +366,7 @@ export const useApiRest = (config) => {
         remove,
         poll,
         pollCancel,
-        download
+        download,
+        upload
     };
 };

@@ -283,6 +283,32 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
         })
     })
   }
+  const upload = (endpoint: string, formData: FormData, params?: IRequestParamsOne, configOverride?: TRestApiOptionsOverride) => {
+    return new Promise<RestApiResponseInterface>((resolve, reject) => {
+      const url = getUrl(endpoint, params, configOverride)
+      const abortController = configOverride?.abortController || new AbortController()
+      let resp: Response|undefined
+      
+      // Don't set Content-Type header - let browser set it with boundary for multipart/form-data
+      const headers = getHeaders(configOverride)
+      
+      fetch(url, {
+        method: 'POST',
+        signal: abortController.signal,
+        headers: headers,
+        body: formData
+      })
+        .then(response => {
+          resp = response
+          handleResponse(response, configOverride)
+          return responseToJson(response)
+        })
+        .then(result => resolve(result as unknown as RestApiResponseInterface))
+        .catch((error: Error) => {
+          reject(config.errorHandler ? config.errorHandler(error, resp) : error)
+        })
+    })
+  }
   const put = (endpoint: string, data: JsonObject|undefined, params: IRequestParamsOne, configOverride: TRestApiOptionsOverride) => {
     return new Promise<JsonObject>((resolve, reject) => {
       const url = getUrl(endpoint, params, configOverride)
@@ -406,6 +432,7 @@ export const useApiRest = (config: IAptvisionApiRestConfig) => {
     remove,
     poll,
     pollCancel,
-    download
+    download,
+    upload
   }
 }
