@@ -39,6 +39,7 @@ export declare const useApiRest: (config: IAptvisionApiRestConfig) => {
     get: (endpoint: string, params?: JsonObject, configOverride?: TRestApiOptionsOverride) => Promise<JsonObject>;
     post: (endpoint: string, data: JsonObject | undefined, configOverride: TRestApiOptionsOverride) => Promise<RestApiResponseInterface<any>>;
     put: (endpoint: string, data: JsonObject | undefined, id: string, configOverride: TRestApiOptionsOverride) => Promise<JsonObject>;
+    upload: (endpoint: string, formData: FormData, configOverride?: TRestApiOptionsOverride) => Promise<RestApiResponseInterface<any>>;
     remove: (endpoint: string, configOverride: TRestApiOptionsOverride) => Promise<JsonObject>;
     poll: (endpoint: string, params: JsonObject, intervalSec: number, configOverride: TRestApiOptionsOverride) => void;
     pollCancel: (endpoint: string) => void;
