@@ -219,7 +219,6 @@ export const useApiRest = (config) => {
         });
     };
     const upload = (endpoint, formData, params, configOverride) => {
-        console.log("🚀 ~ upload ~ endpoint:", endpoint);
         return new Promise((resolve, reject) => {
             const url = getUrl(endpoint, params, configOverride);
             const abortController = (configOverride === null || configOverride === void 0 ? void 0 : configOverride.abortController) || new AbortController();
